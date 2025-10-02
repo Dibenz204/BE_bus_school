@@ -1,0 +1,25 @@
+{
+  "name": "be_bus_school",
+  "version": "1.0.0",
+  "description": "Project_busmap_school",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dibenz204/BE_bus_school.git"
+  },
+  "keywords": [
+    "nodejs",
+    "react",
+    "busschool"
+  ],
+  "author": "dibenz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dibenz204/BE_bus_school/issues"
+  },
+  "homepage": "https://github.com/Dibenz204/BE_bus_school#readme"
+}
