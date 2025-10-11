@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         gender: {
-            type: DataTypes.ENUM('male', 'female', 'other'),
+            type: DataTypes.ENUM('Nam', 'Nữ', 'Khác'),
             allowNull: false
         },
         address: {
@@ -35,32 +35,32 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.ENUM('active', 'inactive'),
-            defaultValue: 'active'
+            type: DataTypes.ENUM('Hoạt động', 'Ngưng'),
+            defaultValue: 'Hoạt động'
         }
     }, {
         sequelize,
         modelName: 'Parent',
         tableName: 'parent',
-        timestamps: true,
+        timestamps: false,
         underscored: false
     });
 
     // Tạo ID: PR001, PR002...
     Parent.beforeCreate(async (parent, options) => {
         const lastParent = await Parent.findOne({
-            order: [['created_at', 'DESC']],
+            order: [['id_parent', 'DESC']],
             attributes: ['id_parent'],
             transaction: options?.transaction
         });
 
         let nextNumber = 1;
-        if (lastParent && lastParent.id) {
-            const currentNumber = parseInt(lastParent.id.replace('PR', ''));
+        if (lastParent && lastParent.id_parent) {
+            const currentNumber = parseInt(lastParent.id_parent.replace('PR', ''));
             nextNumber = currentNumber + 1;
         }
 
-        id_parent = `PR${nextNumber.toString().padStart(3, '0')}`;
+        parent.id_parent = `PR${nextNumber.toString().padStart(3, '0')}`;
     });
 
     return Parent;

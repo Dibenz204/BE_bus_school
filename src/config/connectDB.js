@@ -1,6 +1,5 @@
-
-
-import { Sequelize } from 'sequelize';
+// import { Sequelize } from 'sequelize';
+const { Sequelize } = require('sequelize');
 
 
 const sequelize = new Sequelize('quanlyxebus', 'root', null, {
@@ -18,4 +17,5 @@ let connectDB = async () => {
     }
 }
 
-export default connectDB;
+// export default connectDB;
+module.exports = connectDB;

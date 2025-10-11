@@ -1,24 +1,22 @@
-// const express = require('express')   
-// const path = require('path')      
-// require('dotenv').config()
-// const mysql = require('mysql2')
-// const connection = require('./config/database.js')
-// const configViewEngine = require('./config/viewEngine');
-// const webRoutes = require('./routes/web');
+const express = require('express')
+const path = require('path')
+const dotenv = require('dotenv')
+require('dotenv').config()
+const mysql = require('mysql2')
+const configViewEngine = require('./config/viewEngine');
+const webRoutes = require('./routes/web');
+const connectDB = require('./config/connectDB');
 
 // ------------------------------- Trên là khai báo thư viện cách cũ (commonjs) ----------------------------------
 
-import express from 'express';
-import path from 'path';
-import connectDB from './config/connectDB.js';
-import configViewEngine from './config/viewEngine.js';
-import webRoutes from './routes/web.js';
+// import express from 'express';
+// import path from 'path';
+// import connectDB from './config/connectDB.js';
+// import configViewEngine from './config/viewEngine.js';
+// import webRoutes from './routes/web.js';
+// import dotenv from 'dotenv';
 
-
-
-import dotenv from 'dotenv';
-import { connect } from 'http2';
-dotenv.config();
+// dotenv.config();
 
 const app = express()                                //es modules
 

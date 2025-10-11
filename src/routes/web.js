@@ -1,7 +1,9 @@
-// const express = require('express')
+const express = require('express')
+const { getHomePage, getSampleEjs, getDataFromDB, getCRUD, getCRUDpost } = require('../controllers/homeController.js');
 
-import express from 'express'
-import { getHomePage, getSampleEjs, getDataFromDB, getCRUD, getCRUDpost } from '../controllers/homeController.js';
+
+// import express from 'express'
+// import { getHomePage, getSampleEjs, getDataFromDB, getCRUD, getCRUDpost } from '../controllers/homeController.js';
 
 const router = express.Router();
 
@@ -10,12 +12,10 @@ router.get('/', getHomePage) //Khi có request GET tới '/', nó sẽ gọi hà
 
 router.get('/api', getSampleEjs);
 
-router.get('/db', getDataFromDB);
-
 router.get('/crud', getCRUD);
 
 router.post('/post-crud', getCRUDpost);
 
-// module.exports = router; //export (cách cũ) cái router này ra để bên ngoài có thể dùng được 
-export default router;
+module.exports = router; //export (cách cũ) cái router này ra để bên ngoài có thể dùng được 
+// export default router;
 

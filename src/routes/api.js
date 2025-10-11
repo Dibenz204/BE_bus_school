@@ -1,13 +1,13 @@
-import express from "express";
-import { getStudents, createStudent } from "../controllers/homeController.js";
+// import express from "express";
+// import { getStudents, createStudent } from "../controllers/homeController.js";
 
-const router = express.Router();
+// const router = express.Router();
 
-const initApiRoutes = (app) => {
-    router.get("/students", getStudents);
-    router.post("/students", createStudent);
+// const initApiRoutes = (app) => {
+//     router.get("/students", getStudents);
+//     router.post("/students", createStudent);
 
-    app.use("/api", router);
-};
+//     app.use("/api", router);
+// };
 
-export default initApiRoutes;
+// export default initApiRoutes;
