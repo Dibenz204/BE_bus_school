@@ -22,16 +22,16 @@ module.exports = {
                 allowNull: false
             },
             gender: {
-                type: Sequelize.ENUM('male', 'female', 'other'),
+                type: Sequelize.ENUM('Nam', 'Nữ', 'Khác'),
                 allowNull: false,
             },
             address: {
                 type: Sequelize.TEXT,
                 allowNull: false
             },
-            status: {
-                type: Sequelize.ENUM('active', 'inactive'),
-                defaultValue: 'active'
+            role: {
+                type: Sequelize.ENUM('Quản trị viên', 'Phụ huynh', 'Tài xế'),
+                allowNull: false,
             }
         });
     },

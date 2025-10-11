@@ -10,7 +10,7 @@ const createNewParent = async (data) => {
             phone: data.phone,
             gender: data.gender,
             address: data.address,
-            status: data.status
+            role: data.role
         });
         return 'Create new parent succeed!';
     } catch (e) {

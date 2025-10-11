@@ -34,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        status: {
-            type: DataTypes.ENUM('Hoạt động', 'Ngưng'),
-            defaultValue: 'Hoạt động'
+        role: {
+            type: DataTypes.ENUM('Quản trị viên', 'Phụ huynh', 'Tài xế'),
+            allowNull: false,
         }
     }, {
         sequelize,
