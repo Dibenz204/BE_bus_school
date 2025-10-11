@@ -1,0 +1,75 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Create Parent </title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+
+<body>
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <form action="/post-crud" method="post">
+                <div class="form-row">
+
+                    <div class="form-group col-md-6">
+                        <label for="inputNameParent">Tên phụ huynh</label>
+                        <input type="text" class="form-control" id="inputNameParent" name="name"
+                            placeholder="Nhập tên phụ huynh">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="inputNumberphone">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="inputNumberphone" name="phone"
+                            placeholder="Nhập số điện thoại">
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" class="form-control" id="inputEmail" name="email"
+                        placeholder="Nhập địa chỉ email">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        <label for="inputState">Giới tính</label>
+                        <select id="inputState" class="form-control" name="gender">
+                            <option selected> male </option>
+                            <option> female </option>
+                            <option> other </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="inputAddress">Địa chỉ</label>
+                        <input type="text" class="form-control" id="inputAddress" name="address"
+                            placeholder="Nhập địa chỉ" style="margin-bottom: 15px">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" style="text-align: center"> Tiếp theo </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+
+</html>
