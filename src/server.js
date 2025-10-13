@@ -7,6 +7,8 @@ const configViewEngine = require('./config/viewEngine');
 const webRoutes = require('./routes/web');
 const connectDB = require('./config/connectDB');
 
+// const parentRoutes = require('./routes/parentRoutes');
+
 // ------------------------------- Trên là khai báo thư viện cách cũ (commonjs) ----------------------------------
 
 // import express from 'express';

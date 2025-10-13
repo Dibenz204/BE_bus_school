@@ -1,10 +1,10 @@
 const db = require('../models/index.js');
 const connectDB = require('../config/connectDB.js');
 
-const createNewParent = async (data) => {
+const createNewUser = async (data) => {
     try {
-        await db.Parent.create({
-            id_parent: data.id_parent,
+        await db.User.create({
+            id_user: data.id_user,
             name: data.name,
             email: data.email,
             phone: data.phone,
@@ -12,10 +12,10 @@ const createNewParent = async (data) => {
             address: data.address,
             role: data.role
         });
-        return 'Create new parent succeed!';
+        return 'Create new user succeed!';
     } catch (e) {
         throw e;
     }
 };
 
-module.exports = { createNewParent };
+module.exports = { createNewUser };

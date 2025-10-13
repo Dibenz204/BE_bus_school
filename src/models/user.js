@@ -2,14 +2,22 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class Parent extends Model {
+    class User extends Model {
         static associate(models) {
-            // Không cần associate lúc này
+            User.hasMany(models.Student, {
+                foreignKey: 'id_user',
+                as: 'students'
+            })
+
+            User.hasMany(models.Driver, {
+                foreignKey: 'id_user',
+                as: 'drivers'
+            })
         }
     }
 
-    Parent.init({
-        id_parent: {
+    User.init({
+        id_user: {
             type: DataTypes.STRING(10),
             primaryKey: true
         },
@@ -40,29 +48,29 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         sequelize,
-        modelName: 'Parent',
-        tableName: 'parent',
-        timestamps: false,
+        modelName: 'User',
+        tableName: 'user',
+        timestamps: true,
         underscored: false
     });
 
     // Tạo ID: PR001, PR002...
-    Parent.beforeCreate(async (parent, options) => {
-        const lastParent = await Parent.findOne({
-            order: [['id_parent', 'DESC']],
-            attributes: ['id_parent'],
+    User.beforeCreate(async (user, options) => {
+        const lastUser = await User.findOne({
+            order: [['id_user', 'DESC']],
+            attributes: ['id_user'],
             transaction: options?.transaction
         });
 
         let nextNumber = 1;
-        if (lastParent && lastParent.id_parent) {
-            const currentNumber = parseInt(lastParent.id_parent.replace('PR', ''));
+        if (lastUser && lastUser.id_user) {
+            const currentNumber = parseInt(lastUser.id_user.replace('U', ''));
             nextNumber = currentNumber + 1;
         }
 
-        parent.id_parent = `PR${nextNumber.toString().padStart(3, '0')}`;
+        user.id_user = `U${nextNumber.toString().padStart(3, '0')}`;
     });
 
-    return Parent;
+    return User;
 };
 

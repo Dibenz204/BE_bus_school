@@ -1,12 +1,13 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
+
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('parent', {
-            id_parent: {
-                allowNull: false,
+        await queryInterface.createTable('user', {
+            id_user: {
+                type: Sequelize.STRING(10),
                 primaryKey: true,
-                type: Sequelize.STRING(10)
+                allowNull: false
             },
             name: {
                 type: Sequelize.STRING,
@@ -23,7 +24,7 @@ module.exports = {
             },
             gender: {
                 type: Sequelize.ENUM('Nam', 'Nữ', 'Khác'),
-                allowNull: false,
+                allowNull: false
             },
             address: {
                 type: Sequelize.TEXT,
@@ -31,11 +32,25 @@ module.exports = {
             },
             role: {
                 type: Sequelize.ENUM('Quản trị viên', 'Phụ huynh', 'Tài xế'),
+                allowNull: false
+            },
+
+            // ✅ timestamps
+            createdAt: {
                 allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             }
         });
     },
+
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('parent');
+        await queryInterface.dropTable('user');
     }
 };
+
