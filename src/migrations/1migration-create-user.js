@@ -22,6 +22,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false
             },
+            birthday: {
+                type: Sequelize.DATEONLY,
+                allowNull: false
+            },
             gender: {
                 type: Sequelize.ENUM('Nam', 'Nữ', 'Khác'),
                 allowNull: false
@@ -30,12 +34,16 @@ module.exports = {
                 type: Sequelize.TEXT,
                 allowNull: false
             },
+            password: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
             role: {
                 type: Sequelize.ENUM('Quản trị viên', 'Phụ huynh', 'Tài xế'),
                 allowNull: false
             },
 
-            // ✅ timestamps
+            // timestamps
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,

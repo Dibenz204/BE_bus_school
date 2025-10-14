@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        birthday: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+        },
         gender: {
             type: DataTypes.ENUM('Nam', 'Nữ', 'Khác'),
             allowNull: false
@@ -41,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
         address: {
             type: DataTypes.TEXT,
             allowNull: false
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         role: {
             type: DataTypes.ENUM('Quản trị viên', 'Phụ huynh', 'Tài xế'),
@@ -69,6 +77,14 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         user.id_user = `U${nextNumber.toString().padStart(3, '0')}`;
+
+        if (!user.password && user.birthday) {
+            const date = new Date(user.birthday);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            user.password = `${day}${month}${year}`;
+        }
     });
 
     return User;

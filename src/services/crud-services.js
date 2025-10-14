@@ -8,8 +8,10 @@ const createNewUser = async (data) => {
             name: data.name,
             email: data.email,
             phone: data.phone,
+            birthday: data.birthday,
             gender: data.gender,
             address: data.address,
+            password: data.password,
             role: data.role
         });
         return 'Create new user succeed!';
