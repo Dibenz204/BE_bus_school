@@ -5,7 +5,14 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize('quanlyxebus', 'root', null, {
     host: 'localhost',
     dialect: 'mysql',
-    logging: false
+    logging: false,
+
+    dialectOptions: {
+        dateStrings: true,
+        typeCast: true,
+        timezone: '+07:00'
+    },
+    timezone: '+07:00'
 });
 
 let connectDB = async () => {

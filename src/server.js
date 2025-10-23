@@ -4,41 +4,32 @@ const dotenv = require('dotenv')
 require('dotenv').config()
 const mysql = require('mysql2')
 const configViewEngine = require('./config/viewEngine');
-const webRoutes = require('./routes/web');
 const connectDB = require('./config/connectDB');
 
-// const parentRoutes = require('./routes/parentRoutes');
+const userRoutes = require('./routes/userRoutes.js');
+const webRoutes = require('./routes/webRoutes.js');
 
-// ------------------------------- Trên là khai báo thư viện cách cũ (commonjs) ----------------------------------
+const cors = require('cors');
 
-// import express from 'express';
-// import path from 'path';
-// import connectDB from './config/connectDB.js';
-// import configViewEngine from './config/viewEngine.js';
-// import webRoutes from './routes/web.js';
-// import dotenv from 'dotenv';
-
-// dotenv.config();
 
 const app = express()                                //es modules
+
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 
 //Dùng để lấy dữ liệu từ form gửi lên (body)
 //Nếu ko có đoạn này thì req.body sẽ là undefined --> xem file homecotroller.js để rõ hơn
 //app.use(express.urlencoded({ extended: false })); //khi extended là false thì chỉ nhận các giá trị dạng string hoặc array
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const port = process.env.PORT || 5000                //Nếu có biến môi trường PORT thì lấy biến đó, ko thì lấy 5000
-const host = process.env.HOST || 'localhost'         //Nếu có biến môi trường HOST thì lấy biến đó, ko thì lấy localhost
+const port = process.env.PORT || 5000
+const host = process.env.HOST || 'localhost'
 
-
-// connection.query(
-//   'select * from client a',
-//   function (err, results, fields) {
-//     console.log(">>>>>> results: ", results);
-//   }
-// )
-
-connectDB(); //Gọi hàm kết nối database
 
 
 configViewEngine(app); //Gọi hàm cấu hình view engine
@@ -51,7 +42,7 @@ configViewEngine(app); //Gọi hàm cấu hình view engine
 // app.use(express.static(path.join(__dirname, 'public')));      //chỉ định thư mục chứa file tĩnh
 //app.use(express.static('public')); //cách viết khác, chỉ định thư mục chứa file tĩnh
 
-
+app.use('/user/api', userRoutes);
 app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố gì cả, nếu muốn có tiền tố thì thay '' thành '/api' chẳng hạn
 //Ví dụ: nếu để app.use('/hehe', webRoutes); thì khi chạy, nó sẽ là localhost:5000/hehe/........ rồi mới tới các đường dẫn khác phía sau
 //-----------------------------------------------------------------------------
@@ -71,7 +62,8 @@ app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố g
 
 
 
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  });
 })

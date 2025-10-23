@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         phone: {
             type: DataTypes.STRING,
+            unique: true,
             allowNull: false
         },
         birthday: {
@@ -62,7 +63,6 @@ module.exports = (sequelize, DataTypes) => {
         underscored: false
     });
 
-    // Tạo ID: PR001, PR002...
     User.beforeCreate(async (user, options) => {
         const lastUser = await User.findOne({
             order: [['id_user', 'DESC']],
