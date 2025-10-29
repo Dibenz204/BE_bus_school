@@ -1,5 +1,6 @@
 const db = require('../models/index.js');
 const CRUDservices = require('../services/crud-services.js');
+const CRUDuser = require('../services/crud-user.js');
 
 const getHomePage = async (req, res) => {
     try {
@@ -85,6 +86,51 @@ const deleteCRUD = async (req, res) => {
 
 }
 
+const postCreateStudent = async (req, res) => {
+    try {
+        let message = await CRUDuser.createNewStudent(req.body);
+        console.log(message);
+        return res.send('Thêm học sinh thành công!');
+    } catch (e) {
+        console.error(e);
+        res.status(400).send(e.message || 'Lỗi khi thêm học sinh');
+    }
+};
+
+// Lấy danh sách học sinh
+const getStudentList = async (req, res) => {
+    try {
+        let students = await CRUDuser.getAllStudents();
+        return res.json(students);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: e.message });
+    }
+};
+
+// Xoá học sinh
+const deleteStudentById = async (req, res) => {
+    try {
+        let message = await CRUDuser.deleteStudent(req.params.id);
+        console.log(message);
+        return res.send('Xoá học sinh thành công!');
+    } catch (e) {
+        console.error(e);
+        res.status(400).send(e.message || 'Lỗi khi xoá học sinh');
+    }
+};
+
+// Cập nhật học sinh
+const updateStudentById = async (req, res) => {
+    try {
+        let message = await CRUDuser.updateStudent(req.params.id, req.body);
+        console.log(message);
+        return res.send('Cập nhật học sinh thành công!');
+    } catch (e) {
+        console.error(e);
+        res.status(400).send(e.message || 'Lỗi khi cập nhật học sinh');
+    }
+};
 
 module.exports = {
     getHomePage,
@@ -94,5 +140,9 @@ module.exports = {
     displaygetCRUD,
     editCRUD,
     putCRUD,
-    deleteCRUD
+    deleteCRUD,
+     postCreateStudent,
+    getStudentList,
+    deleteStudentById,
+    updateStudentById
 };

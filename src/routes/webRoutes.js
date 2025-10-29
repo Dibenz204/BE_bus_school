@@ -1,7 +1,7 @@
 
 
 const express = require('express')
-const { getHomePage, getSampleEjs, displaygetCRUD, getCRUD, postCRUD, putCRUD, editCRUD, deleteCRUD } = require('../controllers/homeController.js');
+const { getHomePage, getSampleEjs, displaygetCRUD, getCRUD, postCRUD, putCRUD, editCRUD, deleteCRUD, postCreateStudent, getStudentList, deleteStudentById, updateStudentById } = require('../controllers/homeController.js');
 
 const router = express.Router();
 
@@ -21,6 +21,16 @@ router.post('/put-crud', putCRUD);
 router.get('/edit-crud', editCRUD);
 
 router.get('/delete-crud', deleteCRUD);
+
+router.post('/student/register', postCreateStudent);
+router.get('/student/list', getStudentList);
+router.delete('/student/delete/:id', deleteStudentById);
+router.put('/student/update/:id', updateStudentById);
+
+router.get('/crud-student', (req, res) => {
+    res.render('crud_student');
+});
+
 
 module.exports = router; //export (cách cũ) cái router này ra để bên ngoài có thể dùng được
 // export default router;

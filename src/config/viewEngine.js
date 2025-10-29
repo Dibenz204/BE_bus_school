@@ -5,11 +5,12 @@ const express = require('express')
 // import express from 'express';
 
 const configViewEngine = (app) => {
-    app.set('views', path.join('./src', 'views'));  // chỉ định thư mục chứa file ejs
-    app.set('view engine', 'ejs')
+    // Use __dirname so paths work regardless of current working directory
+    app.set('views', path.join(__dirname, '..', 'views'));  // chỉ định thư mục chứa file ejs
+    app.set('view engine', 'ejs');
 
     // config static files (css, js, images)
-    app.use(express.static(path.join('./src', 'public')));
+    app.use(express.static(path.join(__dirname, '..', 'public')));
 }
 
 module.exports = configViewEngine;

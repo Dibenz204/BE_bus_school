@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý học sinh</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Modal mờ nền */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        .modal-overlay.show {
+            display: block;
+        }
+
+        /* Modal sửa thông tin */
+        .edit-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .edit-modal.show {
+            display: block;
+        }
+
+        .modal-header-custom {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .btn-close-modal {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close-modal:hover {
+            background-color: #c82333;
+        }
+
+        .modal-body-custom {
+            padding: 30px;
+        }
+
+        .modal-footer-custom {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h3 class="text-center mb-4">Quản lý học sinh</h3>
+        
+        <!-- Form Thêm học sinh -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Đăng ký học sinh</h5>
+            </div>
+            <div class="card-body">
+                <form id="studentForm" class="p-4 border rounded bg-light">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="name" class="form-label">Họ và tên học sinh</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Nhập họ và tên học sinh" required>
+                        </div>
+                        <div class="col">
+                            <label for="class" class="form-label">Lớp</label>
+                            <input type="text" class="form-control" id="class" name="class" placeholder="Nhập lớp" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="gender" class="form-label">Giới tính</label>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="phone" class="form-label">Số điện thoại phụ huynh</label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address_route" class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="address_route" name="address_route" placeholder="Nhập địa chỉ" required>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success px-4 me-2" id="btnXacNhan">Xác nhận</button>
+                        <button type="button" class="btn btn-info px-4" id="btnXem">Xem danh sách</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng hiển thị danh sách học sinh -->
+        <div id="tableContainer" style="display: none;">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Danh sách học sinh</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="studentTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Mã học sinh</th>
+                                    <th>Tên học sinh</th>
+                                    <th>Lớp</th>
+                                    <th>Giới tính</th>
+                                    <th>Địa chỉ</th>
+                                    <th>SĐT phụ huynh</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal sửa thông tin học sinh -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="edit-modal" id="editModal">
+        <div class="modal-header-custom">
+            <h3>Sửa thông tin học sinh</h3>
+            <button class="btn-close-modal" onclick="closeEditModal()">✕</button>
+        </div>
+        <div class="modal-body-custom">
+            <form id="editForm" class="p-4 border rounded bg-light">
+                <input type="hidden" id="editIdStudent" name="id_student">
+                
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="editName" class="form-label">Họ và tên học sinh</label>
+                        <input type="text" class="form-control" id="editName" name="name" placeholder="Nhập họ và tên học sinh" required>
+                    </div>
+                    <div class="col">
+                        <label for="editClass" class="form-label">Lớp</label>
+                        <input type="text" class="form-control" id="editClass" name="class" placeholder="Nhập lớp" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="editGender" class="form-label">Giới tính</label>
+                        <select class="form-control" id="editGender" name="gender" required>
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="editPhone" class="form-label">Số điện thoại phụ huynh</label>
+                        <input type="text" class="form-control" id="editPhone" name="phone" placeholder="Nhập số điện thoại" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="editAddress" class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" id="editAddress" name="address_route" placeholder="Nhập địa chỉ" required>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success px-4 me-2">Xác nhận sửa</button>
+                    <button type="button" class="btn btn-danger px-4" onclick="closeEditModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Xử lý nút Xác nhận - Thêm học sinh
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                class: document.getElementById('class').value,
+                gender: document.getElementById('gender').value,
+                phone: document.getElementById('phone').value,
+                address_route: document.getElementById('address_route').value
+            };
+
+            try {
+                const response = await fetch('/student/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Thêm học sinh thành công!');
+                    document.getElementById('studentForm').reset();
+                    if (document.getElementById('tableContainer').style.display !== 'none') {
+                        loadStudentList();
+                    }
+                } else {
+                    const error = await response.text();
+                    alert('Lỗi: ' + error);
+                }
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        });
+
+        // Xử lý form sửa thông tin
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const idStudent = document.getElementById('editIdStudent').value;
+            const formData = {
+                name: document.getElementById('editName').value,
+                class: document.getElementById('editClass').value,
+                gender: document.getElementById('editGender').value,
+                phone: document.getElementById('editPhone').value,
+                address_route: document.getElementById('editAddress').value
+            };
+
+            try {
+                const response = await fetch(`/student/update/${idStudent}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Cập nhật học sinh thành công!');
+                    closeEditModal();
+                    loadStudentList();
+                } else {
+                    const error = await response.text();
+                    alert('Lỗi: ' + error);
+                }
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        });
+
+        // Xử lý nút Xem - Hiển thị danh sách
+        document.getElementById('btnXem').addEventListener('click', loadStudentList);
+
+        // Hàm tải danh sách học sinh
+        async function loadStudentList() {
+            try {
+                const response = await fetch('/student/list');
+                if (!response.ok) throw new Error('Không thể tải danh sách');
+                
+                const students = await response.json();
+                displayStudentTable(students);
+                document.getElementById('tableContainer').style.display = 'block';
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        }
+
+        // Hàm hiển thị bảng
+        function displayStudentTable(students) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có học sinh nào</td></tr>';
+                return;
+            }
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id_student}</td>
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td>${student.gender}</td>
+                    <td>${student.address_route}</td>
+                    <td>${student.phone}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-2" onclick="editStudent('${student.id_student}', '${student.name}', '${student.class}', '${student.gender}', '${student.phone}', '${student.address_route}')">Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteStudent('${student.id_student}')">Xoá</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Hàm mở modal sửa học sinh
+        function editStudent(idStudent, name, cls, gender, phone, address) {
+            document.getElementById('editIdStudent').value = idStudent;
+            document.getElementById('editName').value = name;
+            document.getElementById('editClass').value = cls;
+            document.getElementById('editGender').value = gender;
+            document.getElementById('editPhone').value = phone;
+            document.getElementById('editAddress').value = address;
+
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        // Hàm đóng modal
+        function closeEditModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.getElementById('editModal').classList.remove('show');
+            document.getElementById('editForm').reset();
+        }
+
+        // Hàm xoá học sinh
+        function deleteStudent(idStudent) {
+            if (confirm('Bạn có chắc chắn muốn xoá học sinh này?')) {
+                fetch(`/student/delete/${idStudent}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Xoá thành công!');
+                        loadStudentList();
+                    } else {
+                        alert('Lỗi khi xoá!');
+                    }
+                })
+                .catch(error => alert('Lỗi: ' + error.message));
+            }
+        }
+    </script>
+</body>
+</html>
