@@ -8,6 +8,8 @@ const connectDB = require('./config/connectDB');
 
 const userRoutes = require('./routes/userRoutes.js');
 const webRoutes = require('./routes/webRoutes.js');
+const busStop = require('./routes/busStopRoute.js')
+const Route = require('./routes/routeRoute.js');
 
 const cors = require('cors');
 
@@ -43,6 +45,8 @@ configViewEngine(app); //Gọi hàm cấu hình view engine
 //app.use(express.static('public')); //cách viết khác, chỉ định thư mục chứa file tĩnh
 
 app.use('/user/api', userRoutes);
+app.use('/api/bus-stop', busStop);
+app.use('/api/route', Route);
 app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố gì cả, nếu muốn có tiền tố thì thay '' thành '/api' chẳng hạn
 //Ví dụ: nếu để app.use('/hehe', webRoutes); thì khi chạy, nó sẽ là localhost:5000/hehe/........ rồi mới tới các đường dẫn khác phía sau
 //-----------------------------------------------------------------------------
