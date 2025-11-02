@@ -15,8 +15,11 @@ const sequelize = new Sequelize(
             dateStrings: true,
             typeCast: true,
             timezone: '+07:00',
-            // Nếu server không support SSL, để undefined
-            ssl: undefined
+            ...(process.env.NODE_ENV === 'production' && {
+                ssl: {
+                    rejectUnauthorized: false
+                }
+            })
         }
     }
 );
@@ -24,7 +27,6 @@ const sequelize = new Sequelize(
 // Hàm connect DB
 let connectDB = async () => {
     try {
-        // Thử authenticate với DB
         await sequelize.authenticate();
         console.log('✅ Database connected successfully');
     } catch (error) {
@@ -34,6 +36,7 @@ let connectDB = async () => {
 }
 
 module.exports = connectDB;
+module.exports.sequelize = sequelize;
 
 
 
