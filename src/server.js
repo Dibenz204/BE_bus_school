@@ -56,7 +56,7 @@ app.use(cors({
 //app.use(express.urlencoded({ extended: false })); //khi extended là false thì chỉ nhận các giá trị dạng string hoặc array
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5001
 const host = process.env.HOST || 'localhost'
 
 
@@ -106,10 +106,3 @@ connectDB().then(() => {
   console.error('Failed to start server:', err);
   process.exit(1);
 });
-
-
-connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  });
-})
