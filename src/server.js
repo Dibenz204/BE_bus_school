@@ -11,18 +11,45 @@ const webRoutes = require('./routes/webRoutes.js');
 const busStop = require('./routes/busStopRoute.js')
 const Route = require('./routes/routeRoute.js');
 
+// const { initSocketServer } = require('./socketServer');
+
 const cors = require('cors');
 
 
 const app = express()                                //es modules
-
 app.use(express.urlencoded({ extended: true }));
 
+// const Socketserver = http.createServer(app);
+// initSocketServer(Socketserver);
+
+// Cách này chỉ để 1 cor thôi, là để nối với frontend
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   credentials: true,
+// }));
+
+
+//Cho phép nhiều origins trong CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL_VERCEL, // Vercel URL sẽ set vào đây
+];
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Cho phép requests không có origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
 
 //Dùng để lấy dữ liệu từ form gửi lên (body)
 //Nếu ko có đoạn này thì req.body sẽ là undefined --> xem file homecotroller.js để rõ hơn
@@ -64,6 +91,21 @@ app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố g
 //   res.render('sample.ejs') //trả về file ejs
 // })
 
+
+
+// Health check endpoint - để Render/Railway biết server còn sống
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
+});
+
+connectDB().then(() => {
+  app.listen(port, host, () => {
+    console.log(`🚀 Server running on ${host}:${port}`);
+  });
+}).catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});
 
 
 connectDB().then(() => {
