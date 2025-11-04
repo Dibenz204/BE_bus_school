@@ -52,8 +52,9 @@ const getAllBusStops = async (visibleFilter) => {
                 errCode: 0,
                 data: busStops
             });
-        } catch (e) {
-            reject(e);
+        } catch (error) {
+            console.error("❌ Lỗi trong busStopService:", error);
+            throw error;
         }
     });
 };
