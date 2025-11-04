@@ -33,7 +33,8 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  process.env.FRONTEND_URL_VERCEL, // Vercel URL sẽ set vào đây
+  // process.env.FRONTEND_URL_VERCEL, // Vercel URL sẽ set vào đây
+  'https://test-frontend-bus-school.vercel.app'
 ];
 
 app.use(cors({
