@@ -25,19 +25,27 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(10),
             primaryKey: true
         },
-        giayphep: {
-            type: DataTypes.STRING,
+        toado_x: {
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
+        toado_y: {
+            type: DataTypes.DOUBLE,
             allowNull: false
         },
         id_user: {
             type: DataTypes.STRING(10),
             allowNull: false
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, {
         sequelize,
         modelName: 'Driver',
         tableName: 'driver',
-        timestamps: false
+        timestamps: true
     });
 
     Driver.beforeCreate(async (driver, options) => {

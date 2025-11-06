@@ -3,6 +3,7 @@ const path = require('path')
 const dotenv = require('dotenv')
 require('dotenv').config()
 const mysql = require('mysql2')
+const http = require('http');
 const configViewEngine = require('./config/viewEngine');
 const connectDB = require('./config/connectDB');
 
@@ -10,14 +11,17 @@ const userRoutes = require('./routes/userRoutes.js');
 const webRoutes = require('./routes/webRoutes.js');
 const busStop = require('./routes/busStopRoute.js')
 const Route = require('./routes/routeRoute.js');
+const driverRoutes = require('./routes/driverRoute.js');
 
-// const { initSocketServer } = require('./socketServer');
+const { initSocketServer } = require('./socketServer');
 
 const cors = require('cors');
 
 
 const app = express()                                //es modules
 app.use(express.urlencoded({ extended: true }));
+
+const server = http.createServer(app);
 
 // const Socketserver = http.createServer(app);
 // initSocketServer(Socketserver);
@@ -75,6 +79,7 @@ configViewEngine(app); //Gọi hàm cấu hình view engine
 app.use('/user/api', userRoutes);
 app.use('/api/bus-stop', busStop);
 app.use('/api/route', Route);
+app.use('/api/driver', driverRoutes);
 app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố gì cả, nếu muốn có tiền tố thì thay '' thành '/api' chẳng hạn
 //Ví dụ: nếu để app.use('/hehe', webRoutes); thì khi chạy, nó sẽ là localhost:5000/hehe/........ rồi mới tới các đường dẫn khác phía sau
 //-----------------------------------------------------------------------------
@@ -96,14 +101,27 @@ app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố g
 
 // Health check endpoint - để Render/Railway biết server còn sống
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date() });
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date(),
+    socketIO: 'Active'
+  });
 });
 
 connectDB().then(() => {
-  app.listen(port, host, () => {
+  initSocketServer(server);
+
+  // app.listen(port, host, () => {
+  //   console.log(`🚀 Server running on ${host}:${port}`);
+  // });
+  server.listen(port, host, () => {
     console.log(`🚀 Server running on ${host}:${port}`);
+    console.log(`🔌 Socket.IO ready on ws://${host}:${port}/gps`);
   });
+
 }).catch(err => {
   console.error('Failed to start server:', err);
   process.exit(1);
+
+
 });

@@ -8,8 +8,14 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true
             },
-            giayphep: {
-                type: Sequelize.STRING,
+
+
+            toado_x: {
+                type: Sequelize.DOUBLE,
+                allowNull: false
+            },
+            toado_y: {
+                type: Sequelize.DOUBLE,
                 allowNull: false
             },
             id_user: {
@@ -21,19 +27,24 @@ module.exports = {
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
-            }
+            },
+
+            status: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: true
+            },
 
             // ✅ timestamps
-            // createdAt: {
-            //     allowNull: false,
-            //     type: Sequelize.DATE,
-            //     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-            // },
-            // updatedAt: {
-            //     allowNull: false,
-            //     type: Sequelize.DATE,
-            //     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-            // }
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+            }
         });
     },
 

@@ -1,95 +1,118 @@
-// const socketIO = require('socket.io');
+const socketIO = require('socket.io');
+const db = require('./models/index.js');
 
-// let io;
+let io = null;
 
-// const initSocketServer = (server) => {
-//     io = socketIO(server, {
-//         cors: {
-//             origin: "*", // Hoặc chỉ định domain cụ thể
-//             methods: ["GET", "POST"]
-//         }
-//     });
+const initSocketServer = (server) => {
+    io = socketIO(server, {
+        cors: {
+            origin: [
+                'http://localhost:5173',
+                'http://localhost:3000',
+                'https://test-frontend-bus-school.vercel.app'
+            ],
+            credentials: true,
+            methods: ["GET", "POST"]
+        },
+        transports: ['websocket', 'polling'], // Hỗ trợ cả websocket và polling cho Render
+        pingTimeout: 60000,
+        pingInterval: 25000
+    });
 
-//     // Map để lưu thông tin tài xế đang online
-//     const activeDrivers = new Map();
+    // Namespace cho GPS tracking
+    const gpsNamespace = io.of('/gps');
 
-//     io.on('connection', (socket) => {
-//         console.log('🔌 Client connected:', socket.id);
+    gpsNamespace.on('connection', (socket) => {
+        console.log('🚗 Driver connected:', socket.id);
 
-//         // 1. Tài xế đăng nhập và gửi GPS
-//         socket.on('driver-login', (data) => {
-//             const { driverId, driverName } = data;
+        // Driver gửi vị trí realtime
+        socket.on('update-location', async (data) => {
+            try {
+                const { id_driver, toado_x, toado_y, id_user } = data;
 
-//             activeDrivers.set(socket.id, {
-//                 driverId,
-//                 driverName,
-//                 socketId: socket.id,
-//                 lastUpdate: new Date()
-//             });
+                console.log(`📍 Location update from ${id_driver}:`, { toado_x, toado_y });
 
-//             console.log(`🚗 Tài xế ${driverName} (ID: ${driverId}) đã online`);
+                // Lưu vào database
+                const driver = await db.Driver.findOne({
+                    where: { id_driver: id_driver },
+                    raw: false
+                });
 
-//             // Broadcast danh sách tài xế online
-//             io.emit('drivers-online', Array.from(activeDrivers.values()));
-//         });
+                if (driver) {
+                    driver.toado_x = toado_x;
+                    driver.toado_y = toado_y;
+                    await driver.save();
 
-//         // 2. Nhận GPS từ tài xế
-//         socket.on('send-gps', async (data) => {
-//             const { driverId, lat, lng, speed, heading, timestamp } = data;
+                    // Broadcast tới TẤT CẢ clients (Admin, phụ huynh đang xem map)
+                    gpsNamespace.emit('driver-location-updated', {
+                        id_driver,
+                        toado_x,
+                        toado_y,
+                        timestamp: new Date().toISOString()
+                    });
 
-//             console.log(`📍 GPS từ tài xế ${driverId}:`, { lat, lng });
+                    console.log(`✅ Location updated and broadcasted for ${id_driver}`);
+                } else {
+                    console.log(`❌ Driver ${id_driver} not found`);
+                }
 
-//             // Cập nhật vị trí tài xế
-//             const driver = activeDrivers.get(socket.id);
-//             if (driver) {
-//                 driver.lat = lat;
-//                 driver.lng = lng;
-//                 driver.speed = speed;
-//                 driver.heading = heading;
-//                 driver.lastUpdate = new Date();
-//             }
+            } catch (error) {
+                console.error('❌ Error updating location:', error);
+                socket.emit('location-error', {
+                    message: 'Lỗi cập nhật vị trí'
+                });
+            }
+        });
 
-//             // Broadcast vị trí tới tất cả admin/dashboard
-//             io.emit('driver-location-update', {
-//                 driverId,
-//                 lat,
-//                 lng,
-//                 speed,
-//                 heading,
-//                 timestamp
-//             });
+        // Driver bật/tắt GPS
+        socket.on('toggle-gps-status', async (data) => {
+            try {
+                const { id_driver, status } = data;
 
-//             // TODO: Lưu vào database nếu cần lịch sử
-//             // await saveGPSHistory({ driverId, lat, lng, timestamp });
-//         });
+                const driver = await db.Driver.findOne({
+                    where: { id_driver },
+                    raw: false
+                });
 
-//         // 3. Admin yêu cầu vị trí tất cả tài xế
-//         socket.on('request-all-drivers', () => {
-//             const driversData = Array.from(activeDrivers.values())
-//                 .filter(d => d.lat && d.lng);
+                if (driver) {
+                    driver.status = status;
+                    await driver.save();
 
-//             socket.emit('all-drivers-location', driversData);
-//         });
+                    // Thông báo trạng thái tới tất cả clients
+                    gpsNamespace.emit('driver-status-changed', {
+                        id_driver,
+                        status,
+                        timestamp: new Date().toISOString()
+                    });
 
-//         // 4. Ngắt kết nối
-//         socket.on('disconnect', () => {
-//             const driver = activeDrivers.get(socket.id);
-//             if (driver) {
-//                 console.log(`🚫 Tài xế ${driver.driverName} đã offline`);
-//                 activeDrivers.delete(socket.id);
-//                 io.emit('drivers-online', Array.from(activeDrivers.values()));
-//             }
-//         });
-//     });
+                    console.log(`🔄 Driver ${id_driver} GPS status: ${status ? 'ON' : 'OFF'}`);
+                }
+            } catch (error) {
+                console.error('❌ Error toggling GPS status:', error);
+            }
+        });
 
-//     return io;
-// };
+        // Khi driver disconnect
+        socket.on('disconnect', () => {
+            console.log('🔴 Driver disconnected:', socket.id);
+        });
 
-// const getIO = () => {
-//     if (!io) {
-//         throw new Error('Socket.io chưa được khởi tạo!');
-//     }
-//     return io;
-// };
+        // Ping/Pong để giữ connection alive (quan trọng với Render)
+        socket.on('ping', () => {
+            socket.emit('pong');
+        });
+    });
 
-// module.exports = { initSocketServer, getIO };
+    console.log('✅ Socket.IO server initialized on /gps namespace');
+    return io;
+};
+
+// Export để sử dụng ở nơi khác nếu cần
+const getIO = () => {
+    if (!io) {
+        throw new Error('Socket.IO chưa được khởi tạo!');
+    }
+    return io;
+};
+
+module.exports = { initSocketServer, getIO };
