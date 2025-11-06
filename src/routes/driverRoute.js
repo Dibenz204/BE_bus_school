@@ -22,4 +22,6 @@ router.put("/update-location", driverController.handleUpdateDriverLocation);
 
 router.get("/all-locations", driverController.handleGetAllDriverLocations);
 
+router.get("/all-locations", driverController.handleGetDriverLocations);
+
 module.exports = router;

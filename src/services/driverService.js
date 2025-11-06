@@ -213,6 +213,45 @@ const updateDriverLocation = async (driverId, toado_x, toado_y) => {
     });
 };
 
+const getAllDriverLocations = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const drivers = await db.Driver.findAll({
+                attributes: ['id_driver', 'toado_x', 'toado_y', 'status', 'updatedAt'],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'user',
+                        attributes: ['name', 'phone', 'email'] // ✅ SỬA: name chứ không phải fullname
+                    }
+                ],
+                raw: true,
+                nest: true
+            });
+
+            const locations = drivers.map(driver => ({
+                id_driver: driver.id_driver,
+                toado_x: driver.toado_x,
+                toado_y: driver.toado_y,
+                status: driver.status,
+                driver_name: driver.user?.name || "Không rõ",
+                driver_phone: driver.user?.phone || "Không có",
+                driver_email: driver.user?.email || "Không có",
+                last_updated: driver.updatedAt
+            }));
+
+            resolve({
+                errCode: 0,
+                message: "Lấy vị trí tài xế thành công",
+                locations
+            });
+        } catch (e) {
+            console.error("❌ Lỗi trong getAllDriverLocations:", e);
+            reject(e);
+        }
+    });
+};
+
 module.exports = {
     createDriver,
     getAllDrivers,
@@ -220,5 +259,6 @@ module.exports = {
     deleteDriver,
     updateDriverStatus,
     updateDriver,
-    updateDriverLocation
+    updateDriverLocation,
+    getAllDriverLocations
 };
