@@ -17,10 +17,10 @@
   },
   "production": {
     "username": "root",
-    "password": "xGsebvoEbMwjmTFZPUGJyOMfYXbydiEz",
+    "password": "fWUtKFCAibxyegMFEQcdlncqZQrABphx",
     "database": "railway",
-    "host": "crossover.proxy.rlwy.net",
-    "port": 39479,
+    "host": "gondola.proxy.rlwy.net",
+    "port": 31820,
     "dialect": "mysql",
     "logging": false,
     "timezone": "+07:00",
