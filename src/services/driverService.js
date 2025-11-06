@@ -32,26 +32,50 @@ const createDriver = async (data) => {
     })
 };
 
+// const getAllDrivers = async (driverId) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             let drivers = [];
+//             if (driverId === 'ALL') {
+//                 drivers = await db.Driver.findAll({
+//                     raw: true,
+//                     attributes: { exclude: [password] }
+//                 });
+//             }
+
+//             else if (driverId && driverId !== 'ALL') {
+//                 const driver = await db.Driver.findOne({
+//                     where: { id_driver: driverId },
+//                     raw: true,
+//                     attributes: { exclude: [password] }
+//                 });
+//                 drivers = driver ? [driver] : [];
+//             }
+//             resolver(drivers)
+//         }
+//         catch (e) {
+//             reject(e);
+//         }
+//     })
+// };
+
 const getAllDrivers = async (driverId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let drivers = [];
             if (driverId === 'ALL') {
                 drivers = await db.Driver.findAll({
-                    raw: true,
-                    attributes: { exclude: [password] }
+                    raw: true
                 });
             }
-
             else if (driverId && driverId !== 'ALL') {
                 const driver = await db.Driver.findOne({
                     where: { id_driver: driverId },
-                    raw: true,
-                    attributes: { exclude: [password] }
+                    raw: true
                 });
                 drivers = driver ? [driver] : [];
             }
-            resolver(drivers)
+            resolve(drivers);
         }
         catch (e) {
             reject(e);
@@ -147,12 +171,43 @@ const updateDriverStatus = async (driverId, newStatus) => {
     });
 };
 
-const updateDriver = async (driverId) => {
+// const updateDriver = async (data) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             const driver = await db.Driver.findOne({
+//                 where: { id_driver: data.id_driver },
+//                 raw: false, // cần raw: false để có thể .save()
+//             });
+
+//             if (!driver) {
+//                 resolve({
+//                     errCode: 1,
+//                     message: "Không tìm thấy tài xế để cập nhật!",
+//                 });
+//             }
+
+//             else {
+//                 driver.toado_x = data.toado_x;
+//                 driver.toado_y = data.toado_y;
+//                 await driver.save();
+//                 resolve({
+//                     errCode: 0,
+//                     message: "Cập nhật tài xế thành công!",
+//                 });
+//             }
+//         }
+//         catch (e) {
+//             reject(e);
+//         }
+//     })
+// };
+
+const updateDriver = async (driverId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
             const driver = await db.Driver.findOne({
-                where: { id_driver: driverId },
-                raw: false, // cần raw: false để có thể .save()
+                where: { id_driver: driverId }, // ✅ Dùng driverId từ parameter
+                raw: false,
             });
 
             if (!driver) {
@@ -161,7 +216,6 @@ const updateDriver = async (driverId) => {
                     message: "Không tìm thấy tài xế để cập nhật!",
                 });
             }
-
             else {
                 driver.toado_x = data.toado_x;
                 driver.toado_y = data.toado_y;

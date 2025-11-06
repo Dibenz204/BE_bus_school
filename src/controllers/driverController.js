@@ -103,6 +103,31 @@ const handleUpdateDriverStatus = async (req, res) => {
     }
 };
 
+// const handleUpdateDriver = async (req, res) => {
+//     try {
+//         const driverId = req.body.id_driver;
+//         const data = req.body;
+
+//         if (!driverId) {
+//             return res.status(400).json({
+//                 errCode: 1,
+//                 message: "Thiếu id_driver để cập nhật!",
+//             });
+//         }
+
+//         const result = await driverService.updateDriver(driverId, data);
+
+//         return res.status(200).json(result);
+
+//     } catch (e) {
+//         console.error("❌ Lỗi khi cập nhật tài xế:", e);
+//         return res.status(500).json({
+//             errCode: 1,
+//             message: "Lỗi server khi cập nhật tài xế!",
+//         });
+//     }
+// };
+
 const handleUpdateDriver = async (req, res) => {
     try {
         const driverId = req.body.id_driver;
@@ -115,7 +140,7 @@ const handleUpdateDriver = async (req, res) => {
             });
         }
 
-        const result = await driverService.updateDriver(driverId, data);
+        const result = await driverService.updateDriver(driverId, data); // ✅ Truyền 2 parameters
 
         return res.status(200).json(result);
 
@@ -189,19 +214,19 @@ const handleGetAllDriverLocations = async (req, res) => {
     }
 };
 
-const handleGetDriverLocations = async (req, res) => {
-    try {
-        const result = await driverService.getAllDriverLocations();
-        return res.status(200).json(result);
-    } catch (e) {
-        console.error("❌ Lỗi khi lấy vị trí tài xế:", e);
-        return res.status(500).json({
-            errCode: 1,
-            message: "Lỗi server khi lấy vị trí tài xế!",
-            error: e.message
-        });
-    }
-};
+// const handleGetDriverLocations = async (req, res) => {
+//     try {
+//         const result = await driverService.getAllDriverLocations();
+//         return res.status(200).json(result);
+//     } catch (e) {
+//         console.error("❌ Lỗi khi lấy vị trí tài xế:", e);
+//         return res.status(500).json({
+//             errCode: 1,
+//             message: "Lỗi server khi lấy vị trí tài xế!",
+//             error: e.message
+//         });
+//     }
+// };
 
 // ✅ Xuất module
 module.exports = {
@@ -212,6 +237,6 @@ module.exports = {
     handleUpdateDriverStatus,
     handleUpdateDriver,
     handleUpdateDriverLocation,
-    handleGetAllDriverLocations,
-    handleGetDriverLocations
+    handleGetAllDriverLocations
+    // handleGetDriverLocations
 };
