@@ -3,11 +3,31 @@
 const userService = require('../services/userService.js')
 
 
-let handleLogin = (req, res) => {
-    return res.status(200).json({
-        message: 'hello world'
-    })
-}
+const handleLogin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng nhập đầy đủ email và mật khẩu!",
+            });
+        }
+
+        // Gọi service xử lý login
+        const result = await userService.handleLogin(email, password);
+        
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi đăng nhập:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi đăng nhập!",
+        });
+    }
+};
 
 
 const handleGetAllUser = async (req, res) => {

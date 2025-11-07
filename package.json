@@ -32,7 +32,7 @@
     "ejs": "3.1.10",
     "express": "4.21.2",
     "http": "^0.0.1-security",
-    "localtunnel": "^2.0.2",
+    "localtunnel": "^1.8.3",
     "mysql2": "^3.15.1",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.2",

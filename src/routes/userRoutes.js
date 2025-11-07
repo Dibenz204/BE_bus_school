@@ -4,7 +4,7 @@ const userController = require('../controllers/userController.js');
 
 const router = express.Router();
 
-router.get('/login', userController.handleLogin); // chưa xài
+router.post('/login', userController.handleLogin);
 
 router.get('/read_user', userController.handleGetAllUser);
 
