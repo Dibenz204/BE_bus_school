@@ -8,6 +8,18 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_user',
                 as: 'user'
             });
+
+            Student.belongsTo(models.busStop, {
+                foreignKey: 'id_busstop',
+                as: 'busstop',
+            });
+
+            Student.belongsToMany(models.Schedule, {
+                through: 'ScheduleStudent',
+                foreignKey: 'id_student',
+                otherKey: 'id_schedule',
+                as: 'schedules'
+            });
         }
     }
 
@@ -32,19 +44,32 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        id_user: {                    // Khóa ngoại trỏ tới Parent
+        mssv: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
+        id_user: {
             type: DataTypes.STRING(10),
             allowNull: false,
             references: {
                 model: 'user',
                 key: 'id_user'
             }
+        },
+        id_busstop: {
+            type: DataTypes.STRING(10),
+            allowNull: true,
+            references: {
+                model: 'busstop',
+                key: 'id_busstop'
+            }
         }
     }, {
         sequelize,
         modelName: 'Student',
         tableName: 'student',
-        timestamps: false,
+        timestamps: true,
         underscored: false
     });
 

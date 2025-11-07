@@ -17,7 +17,7 @@ module.exports = {
                 type: Sequelize.STRING(10),
                 allowNull: false,
                 references: {
-                    model: 'busStop', // nên dùng chữ thường
+                    model: 'busStop',
                     key: 'id_busstop'
                 },
                 onUpdate: 'CASCADE',

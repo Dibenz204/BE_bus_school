@@ -24,6 +24,11 @@ module.exports = {
                 type: Sequelize.TEXT,
                 allowNull: true
             },
+            mssv: {
+                type: Sequelize.STRING,
+                allowNull: false,
+                unique: true
+            },
             id_user: {
                 type: Sequelize.STRING(10),
                 allowNull: false,
@@ -33,10 +38,32 @@ module.exports = {
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
+            },
+            id_busstop: {
+                type: Sequelize.STRING(10),
+                allowNull: true,
+                references: {
+                    model: 'busstop',
+                    key: 'id_busstop'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
+            },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             }
 
         });
+        await queryInterface.addIndex('student', ['mssv']);
     },
+
 
     async down(queryInterface, Sequelize) {
         await queryInterface.dropTable('student');

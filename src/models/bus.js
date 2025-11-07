@@ -4,11 +4,21 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Bus extends Model {
         static associate(models) {
-            // Nhiều bus thuộc 1 tài xế
             Bus.belongsTo(models.Driver, {
                 foreignKey: 'id_driver',
                 as: 'driver'
             });
+
+            Bus.belongsTo(models.Route, {
+                foreignKey: 'id_route',
+                as: 'route'
+            });
+
+            Bus.hasMany(models.Schedule, {
+                foreignKey: 'id_bus',
+                as: 'schedules'
+            })
+
         }
     }
 
@@ -21,13 +31,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        suc_chua: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
         id_driver: {
             type: DataTypes.STRING(10),
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'driver',
+                key: 'id_driver'
+            }
+        },
+        id_route: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+            references: {  // ✅ Nên thêm references
+                model: 'route',
+                key: 'id_route'
+            }
         }
     }, {
         sequelize,
