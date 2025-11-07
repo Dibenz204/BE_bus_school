@@ -205,5 +205,50 @@ const updateUser = (data) => {
     });
 };
 
+const handleLogin = async (email, password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Kiểm tra email có tồn tại không
+            const user = await db.User.findOne({
+                where: { email: email },
+                raw: true,
+            });
 
-module.exports = { getAllUser, userCountByRole, userByRole, createNewUser, deleteUser, getUserInfoById, updateUser };
+            if (!user) {
+                resolve({
+                    errCode: 1,
+                    message: "Email không tồn tại trong hệ thống!",
+                });
+                return;
+            }
+
+            // Kiểm tra mật khẩu
+            if (user.password !== password) {
+                resolve({
+                    errCode: 2,
+                    message: "Mật khẩu không chính xác!",
+                });
+                return;
+            }
+
+            // Đăng nhập thành công
+            resolve({
+                errCode: 0,
+                message: "Đăng nhập thành công!",
+                user: {
+                    id_user: user.id_user,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    phone: user.phone,
+                    address: user.address,
+                }
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+module.exports = { getAllUser, userCountByRole, userByRole, createNewUser, deleteUser, getUserInfoById, updateUser, handleLogin };
