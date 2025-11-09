@@ -4,9 +4,13 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Schedule extends Model {
         static associate(models) {
-            Schedule.belongsTo(models.Bus, {
-                foreignKey: 'id_bus',
-                as: 'bus'
+            // Schedule.belongsTo(models.Bus, {
+            //     foreignKey: 'id_bus',
+            //     as: 'bus'
+            // });
+            Schedule.belongsTo(models.Route, {
+                foreignKey: 'id_route',
+                as: 'routes'
             });
 
             Schedule.belongsTo(models.Driver, {
@@ -28,14 +32,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(10),
             primaryKey: true
         },
-        id_bus: {
+        // id_bus: {
+        //     type: DataTypes.STRING(10),
+        //     allowNull: false,
+        //     references: {
+        //         model: 'bus',
+        //         key: 'id_bus'
+        //     },
+        // },
+        id_route: {
             type: DataTypes.STRING(10),
             allowNull: false,
             references: {
-                model: 'bus',
-                key: 'id_bus'
+                model: 'route',
+                key: 'id_route'
             },
-
         },
         id_driver: {
             type: DataTypes.STRING(10),
@@ -61,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'Schedule',
         tableName: 'schedule',
-        timestamps: true
+        timestamps: false
     });
 
     Schedule.beforeCreate(async (schedule, options) => {

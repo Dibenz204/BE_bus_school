@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_route',
                 as: 'buses'
             });
+
+            Route.hasMany(models.Schedule, {
+                foreignKey: 'id_route',
+                as: 'schedules'
+            });
         }
     }
 

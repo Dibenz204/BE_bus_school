@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
                 as: 'route'
             });
 
-            Bus.hasMany(models.Schedule, {
-                foreignKey: 'id_bus',
-                as: 'schedules'
-            })
+            // Bus.hasMany(models.Schedule, {
+            //     foreignKey: 'id_bus',
+            //     as: 'schedules'
+            // })
 
         }
     }

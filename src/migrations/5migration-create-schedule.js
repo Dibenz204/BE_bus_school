@@ -7,12 +7,22 @@ module.exports = {
                 type: Sequelize.STRING(10),
                 primaryKey: true
             },
-            id_bus: {
+            // id_bus: {
+            //     type: Sequelize.STRING(10),
+            //     allowNull: false,
+            //     references: {
+            //         model: 'bus',
+            //         key: 'id_bus'
+            //     },
+            //     onUpdate: 'CASCADE',
+            //     onDelete: 'CASCADE'
+            // },
+            id_route: {
                 type: Sequelize.STRING(10),
                 allowNull: false,
                 references: {
-                    model: 'bus',
-                    key: 'id_bus'
+                    model: 'route',
+                    key: 'id_route'
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'

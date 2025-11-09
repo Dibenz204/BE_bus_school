@@ -12,6 +12,7 @@ const webRoutes = require('./routes/webRoutes.js');
 const busStop = require('./routes/busStopRoute.js')
 const Route = require('./routes/routeRoute.js');
 const driverRoutes = require('./routes/driverRoute.js');
+const scheduleRoutes = require('./routes/scheduleRoutes.js')
 
 const { initSocketServer } = require('./socketServer');
 
@@ -80,6 +81,7 @@ app.use('/user/api', userRoutes);
 app.use('/api/bus-stop', busStop);
 app.use('/api/route', Route);
 app.use('/api/driver', driverRoutes);
+app.use('/api/schedule', scheduleRoutes)
 app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố gì cả, nếu muốn có tiền tố thì thay '' thành '/api' chẳng hạn
 //Ví dụ: nếu để app.use('/hehe', webRoutes); thì khi chạy, nó sẽ là localhost:5000/hehe/........ rồi mới tới các đường dẫn khác phía sau
 //-----------------------------------------------------------------------------
