@@ -145,6 +145,149 @@ const handleUpdateUser = async (req, res) => {
     }
 };
 
+// ⭐ Controller gửi OTP
+const handleSendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp email!",
+            });
+        }
+
+        const result = await userService.sendPasswordResetOTP(email);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi gửi OTP:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi gửi OTP!",
+        });
+    }
+};
+
+// ⭐ Controller xác thực OTP
+const handleVerifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp email và mã OTP!",
+            });
+        }
+
+        const result = await userService.verifyOTP(email, otp);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi xác thực OTP:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi xác thực OTP!",
+        });
+    }
+};
+
+// ⭐ Controller reset mật khẩu (quên mật khẩu)
+const handleResetPassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        if (!email || !newPassword) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp email và mật khẩu mới!",
+            });
+        }
+
+        const result = await userService.resetPassword(email, newPassword);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi reset mật khẩu:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi reset mật khẩu!",
+        });
+    }
+};
+
+// ⭐ Controller đổi mật khẩu (đã đăng nhập)
+const handleChangePasswordWithOld = async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+
+        if (!email || !oldPassword || !newPassword) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp đầy đủ thông tin!",
+            });
+        }
+
+        const result = await userService.changePasswordWithOldPassword(email, oldPassword, newPassword);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi đổi mật khẩu:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi đổi mật khẩu!",
+        });
+    }
+};
+
+// ⭐ Controller đổi mật khẩu
+const handleChangePassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        if (!email || !newPassword) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp email và mật khẩu mới!",
+            });
+        }
+
+        const result = await userService.changePassword(email, newPassword);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi đổi mật khẩu:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi đổi mật khẩu!",
+        });
+    }
+};
+
+// ⭐ Controller xác thực mật khẩu cũ (không đổi mật khẩu)
+const handleVerifyOldPassword = async (req, res) => {
+    try {
+        const { email, oldPassword } = req.body;
+
+        if (!email || !oldPassword) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Vui lòng cung cấp đầy đủ thông tin!",
+            });
+        }
+
+        const result = await userService.verifyOldPasswordOnly(email, oldPassword);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error("❌ Lỗi khi xác thực mật khẩu cũ:", e);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server khi xác thực mật khẩu!",
+        });
+    }
+};
 
 module.exports = {
     handleLogin,
@@ -153,5 +296,11 @@ module.exports = {
     getUserByRole,
     postCreateNewUser,
     handleDeleteUser,
-    handleUpdateUser
+    handleUpdateUser,
+    handleSendOTP,          
+    handleVerifyOTP,        
+    handleChangePassword,    
+    handleResetPassword,    
+    handleChangePasswordWithOld,
+    handleVerifyOldPassword 
 } 
