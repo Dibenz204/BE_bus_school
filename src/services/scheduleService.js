@@ -1,5 +1,3 @@
-
-const { get } = require('http');
 const db = require('../models/index.js');
 
 const getAllSchedules = (scheduleId) => {
@@ -17,12 +15,17 @@ const getAllSchedules = (scheduleId) => {
                         {
                             model: db.Driver,
                             as: 'driver',
-                            attributes: ['id_driver', 'name']
+                            attributes: ['id_driver', 'toado_x', 'toado_y', 'id_user'],
+                            include: [{
+                                model: db.User,
+                                as: 'user',
+                                attributes: ['name'] // Lấy name từ User
+                            }]
                         },
                         {
                             model: db.Student,
                             as: 'students',
-                            attributes: ['id_student', 'name', 'class'],
+                            attributes: ['id_student', 'name', 'class', 'gender', 'id_busstop', 'mssv'],
                             through: { attributes: ['status'] }
                         }
                     ],
@@ -40,12 +43,17 @@ const getAllSchedules = (scheduleId) => {
                         {
                             model: db.Driver,
                             as: 'driver',
-                            attributes: ['id_driver', 'name']
+                            attributes: ['id_driver', 'toado_x', 'toado_y', 'id_user'],
+                            include: [{
+                                model: db.User,
+                                as: 'user',
+                                attributes: ['name'] // Lấy name từ User
+                            }]
                         },
                         {
                             model: db.Student,
                             as: 'students',
-                            attributes: ['id_student', 'name', 'class', 'gender', 'id_busstop'],
+                            attributes: ['id_student', 'name', 'class', 'gender', 'id_busstop', 'mssv'],
                             through: { attributes: ['status'] }
                         }
                     ]
@@ -88,7 +96,7 @@ const createNewSchedule = async (data) => {
                 where: {
                     id_busstop: busStopIds
                 },
-                attributes: ['id_student'],
+                attributes: ['id_student', 'mssv'],
                 raw: true,
                 transaction
             });
@@ -208,10 +216,11 @@ const updateSchedule = (data) => {
                         where: {
                             id_busstop: busStopIds
                         },
-                        attributes: ['id_student'],
+                        attributes: ['id_student', 'mssv'],
                         raw: true,
                         transaction
                     });
+
 
                     // Thêm students mới
                     if (students.length > 0) {
@@ -241,36 +250,36 @@ const updateSchedule = (data) => {
 
 
 // Cập nhật trạng thái pickup của student trong schedule
-// const updateStudentPickupStatus = (scheduleId, studentId, status) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const scheduleStudent = await db.ScheduleStudent.findOne({
-//                 where: {
-//                     id_schedule: scheduleId,
-//                     id_student: studentId
-//                 },
-//                 raw: false
-//             });
+const updateStudentPickupStatus = (scheduleId, studentId, status) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const scheduleStudent = await db.ScheduleStudent.findOne({
+                where: {
+                    id_schedule: scheduleId,
+                    id_student: studentId
+                },
+                raw: false
+            });
 
-//             if (!scheduleStudent) {
-//                 resolve({
-//                     errCode: 1,
-//                     message: "Không tìm thấy học sinh trong lịch trình này!",
-//                 });
-//             } else {
-//                 scheduleStudent.status = status;
-//                 await scheduleStudent.save();
+            if (!scheduleStudent) {
+                resolve({
+                    errCode: 1,
+                    message: "Không tìm thấy học sinh trong lịch trình này!",
+                });
+            } else {
+                scheduleStudent.status = status;
+                await scheduleStudent.save();
 
-//                 resolve({
-//                     errCode: 0,
-//                     message: "Cập nhật trạng thái thành công!",
-//                 });
-//             }
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// };
+                resolve({
+                    errCode: 0,
+                    message: "Cập nhật trạng thái thành công!",
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 
 // // Lấy schedules theo driver
 // const getSchedulesByDriver = (driverId) => {
@@ -348,5 +357,6 @@ module.exports = {
     createNewSchedule,
     getAllSchedules,
     deleteSchedule,
-    updateSchedule
+    updateSchedule,
+    updateStudentPickupStatus
 }

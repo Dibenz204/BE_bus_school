@@ -371,10 +371,80 @@ const getScheduleById = async (req, res) => {
     }
 };
 
+// const updateStudentPickupStatus = async (req, res) => {
+//     try {
+//         const { id_schedule, id_student, status } = req.body;
+
+//         // Validate required fields
+//         if (!id_schedule || !id_student || !status) {
+//             return res.status(400).json({
+//                 errCode: 1,
+//                 message: "Thiếu thông tin bắt buộc: id_schedule, id_student, status!"
+//             });
+//         }
+
+//         // Validate status value
+//         const validStatuses = ['Đang chờ', 'Có mặt', 'Đã đưa/đón'];
+//         if (!validStatuses.includes(status)) {
+//             return res.status(400).json({
+//                 errCode: 1,
+//                 message: "Trạng thái không hợp lệ! Trạng thái phải là: Đang chờ, Có mặt, hoặc Đã đưa/đón"
+//             });
+//         }
+
+//         const result = await scheduleService.updateStudentPickupStatus(id_schedule, id_student, status);
+
+//         return res.status(200).json(result);
+
+//     } catch (error) {
+//         console.error("Lỗi controller updateStudentPickupStatus:", error);
+//         return res.status(500).json({
+//             errCode: 1,
+//             message: "Lỗi server!",
+//             error: error.message
+//         });
+//     }
+// };
+const updateStudentPickupStatus = async (req, res) => {
+    try {
+        const { id_schedule, id_student, status } = req.body;
+
+        // Validate required fields
+        if (!id_schedule || !id_student || !status) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Thiếu thông tin bắt buộc: id_schedule, id_student, status!"
+            });
+        }
+
+        // Validate status value
+        const validStatuses = ['Đang chờ', 'Có mặt', 'Đã đưa/đón'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Trạng thái không hợp lệ!"
+            });
+        }
+
+        const result = await scheduleService.updateStudentPickupStatus(id_schedule, id_student, status);
+
+        return res.status(200).json(result);
+
+    } catch (error) {
+        console.error("Lỗi controller updateStudentPickupStatus:", error);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server!",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     getAllSchedules,
     createNewSchedule,
     deleteSchedule,
     updateSchedule,
-    getScheduleById
+    getScheduleById,
+    updateStudentPickupStatus
 };

@@ -17,4 +17,7 @@ router.put('/update-schedule', scheduleController.updateSchedule);
 // Xóa schedule (query parameter)
 router.delete('/delete-schedule', scheduleController.deleteSchedule);
 
+//Thay đổi status khi học sinh lên xe, xuống xe --> schedule_student
+router.put('/update-student-status', scheduleController.updateStudentPickupStatus);
+
 module.exports = router;
