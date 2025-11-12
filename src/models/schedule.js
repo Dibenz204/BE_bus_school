@@ -84,11 +84,11 @@ module.exports = (sequelize, DataTypes) => {
 
         let nextNumber = 1;
         if (lastSchedule && lastSchedule.id_schedule) {
-            const currentNumber = parseInt(lastSchedule.id_schedule.replace('S', ''));
+            const currentNumber = parseInt(lastSchedule.id_schedule.replace('SC', ''));
             nextNumber = currentNumber + 1;
         }
 
-        schedule.id_schedule = `S${nextNumber.toString().padStart(3, '0')}`;
+        schedule.id_schedule = `SC${nextNumber.toString().padStart(3, '0')}`;
 
     });
 

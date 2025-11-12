@@ -205,14 +205,71 @@ const updateUser = (data) => {
     });
 };
 
+// const handleLogin = async (email, password) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             // Kiểm tra email có tồn tại không
+//             const user = await db.User.findOne({
+//                 where: { email: email },
+//                 raw: true,
+//             });
+
+//             if (!user) {
+//                 resolve({
+//                     errCode: 1,
+//                     message: "Email không tồn tại trong hệ thống!",
+//                 });
+//                 return;
+//             }
+
+//             // Kiểm tra mật khẩu
+//             if (user.password !== password) {
+//                 resolve({
+//                     errCode: 2,
+//                     message: "Mật khẩu không chính xác!",
+//                 });
+//                 return;
+//             }
+
+//             // Đăng nhập thành công
+//             resolve({
+//                 errCode: 0,
+//                 message: "Đăng nhập thành công!",
+//                 user: {
+//                     id_user: user.id_user,
+//                     name: user.name,
+//                     email: user.email,
+//                     role: user.role,
+//                     phone: user.phone,
+//                     address: user.address,
+//                 }
+//             });
+
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
+
 const handleLogin = async (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Kiểm tra email có tồn tại không
             const user = await db.User.findOne({
                 where: { email: email },
-                raw: true,
+                attributes: ['id_user', 'name', 'email', 'role', 'phone', 'address', 'password'],
+                include: [
+                    {
+                        model: db.Driver,
+                        as: 'drivers',
+                        attributes: ['id_driver', 'toado_x', 'toado_y'],
+                        required: false
+                    }
+                ]
             });
+
+            // console.log("🔍 USER TÌM THẤY:", JSON.stringify(user, null, 2));
+            // console.log("🔍 DRIVERS ARRAY:", user?.drivers); // ⭐ Sửa thành drivers
 
             if (!user) {
                 resolve({
@@ -231,21 +288,41 @@ const handleLogin = async (email, password) => {
                 return;
             }
 
+            // Chuẩn bị response data
+            const responseData = {
+                id_user: user.id_user,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                phone: user.phone,
+                address: user.address,
+            };
+
+            // Nếu là tài xế, thêm id_driver vào response
+            if (user.role === "Tài xế" && user.drivers && user.drivers.length > 0) {
+                const driver = user.drivers[0];  // ⭐ Lấy phần tử đầu tiên trong array
+                responseData.id_driver = driver.id_driver;
+                responseData.toado_x = driver.toado_x;
+                responseData.toado_y = driver.toado_y;
+                // console.log("✅ ĐÃ THÊM ID_DRIVER:", driver.id_driver); // ⭐ SỬA DÒNG NÀY
+            } else {
+                console.log("❌ KHÔNG THÊM ID_DRIVER - Lý do:");
+                console.log("- Role là Tài xế?", user.role === "Tài xế");
+                console.log("- Có drivers?", !!user.drivers); // ⭐ SỬA DÒNG NÀY
+                console.log("- Số lượng drivers:", user.drivers?.length || 0); // ⭐ THÊM DÒNG NÀY
+            }
+
+            // console.log("📤 DATA SẼ GỬI VỀ:", responseData);
+
             // Đăng nhập thành công
             resolve({
                 errCode: 0,
                 message: "Đăng nhập thành công!",
-                user: {
-                    id_user: user.id_user,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    phone: user.phone,
-                    address: user.address,
-                }
+                user: responseData
             });
 
         } catch (e) {
+            console.error("❌ Lỗi trong handleLogin:", e);
             reject(e);
         }
     });

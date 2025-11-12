@@ -20,4 +20,7 @@ router.delete('/delete-schedule', scheduleController.deleteSchedule);
 //Thay đổi status khi học sinh lên xe, xuống xe --> schedule_student
 router.put('/update-student-status', scheduleController.updateStudentPickupStatus);
 
+// Tự động cập nhật trạng thái schedule khi tới giờ (status: đã lên lịch, vận hành, hoàn thành)
+router.get('/auto-update-status', scheduleController.autoUpdateScheduleStatus);
+
 module.exports = router;

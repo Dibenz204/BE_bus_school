@@ -6,6 +6,7 @@ const mysql = require('mysql2')
 const http = require('http');
 const configViewEngine = require('./config/viewEngine');
 const connectDB = require('./config/connectDB');
+require('./cronJob.js')
 
 const userRoutes = require('./routes/userRoutes.js');
 const webRoutes = require('./routes/webRoutes.js');

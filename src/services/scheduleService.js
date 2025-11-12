@@ -1,11 +1,96 @@
 const db = require('../models/index.js');
 
-const getAllSchedules = (scheduleId) => {
+// const getAllSchedules = (scheduleId) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             let schedules = [];
+//             if (scheduleId === 'ALL') {
+//                 schedules = await db.Schedule.findAll({
+//                     include: [
+//                         {
+//                             model: db.Route,
+//                             as: 'routes',
+//                             attributes: ['id_route', 'name_street']
+//                         },
+//                         {
+//                             model: db.Driver,
+//                             as: 'driver',
+//                             attributes: ['id_driver', 'toado_x', 'toado_y', 'id_user'],
+//                             include: [{
+//                                 model: db.User,
+//                                 as: 'user',
+//                                 attributes: ['name'] // Lấy name từ User
+//                             }]
+//                         },
+//                         {
+//                             model: db.Student,
+//                             as: 'students',
+//                             attributes: ['id_student', 'name', 'class', 'gender', 'id_busstop', 'mssv'],
+//                             through: { attributes: ['status'] }
+//                         }
+//                     ],
+//                     order: [['Sdate', 'DESC'], ['Stime', 'ASC']]
+//                 });
+//             } else if (scheduleId && scheduleId !== 'ALL') {
+//                 const schedule = await db.Schedule.findOne({
+//                     where: { id_schedule: scheduleId },
+//                     include: [
+//                         {
+//                             model: db.Route,
+//                             as: 'routes',
+//                             attributes: ['id_route', 'name_street']
+//                         },
+//                         {
+//                             model: db.Driver,
+//                             as: 'driver',
+//                             attributes: ['id_driver', 'toado_x', 'toado_y', 'id_user'],
+//                             include: [{
+//                                 model: db.User,
+//                                 as: 'user',
+//                                 attributes: ['name'] // Lấy name từ User
+//                             }]
+//                         },
+//                         {
+//                             model: db.Student,
+//                             as: 'students',
+//                             attributes: ['id_student', 'name', 'class', 'gender', 'id_busstop', 'mssv'],
+//                             through: { attributes: ['status'] }
+//                         }
+//                     ]
+//                 });
+//                 schedules = schedule ? [schedule] : [];
+//             }
+//             resolve(schedules);
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
+
+const getAllSchedules = (scheduleId, filters = {}) => {
     return new Promise(async (resolve, reject) => {
         try {
             let schedules = [];
+            let whereClause = {};
+
+            // Nếu có filter theo driver
+            if (filters.id_driver) {
+                whereClause.id_driver = filters.id_driver;
+            }
+
+            // Nếu có filter theo ngày - QUAN TRỌNG: chỉ lấy đúng ngày được filter
+            if (filters.date) {
+                whereClause.Sdate = filters.date;
+            }
+
+            // Nếu có filter theo status
+            if (filters.status) {
+                whereClause.status = filters.status;
+            }
+
             if (scheduleId === 'ALL') {
                 schedules = await db.Schedule.findAll({
+                    where: whereClause,
                     include: [
                         {
                             model: db.Route,
@@ -19,7 +104,7 @@ const getAllSchedules = (scheduleId) => {
                             include: [{
                                 model: db.User,
                                 as: 'user',
-                                attributes: ['name'] // Lấy name từ User
+                                attributes: ['name']
                             }]
                         },
                         {
@@ -29,11 +114,12 @@ const getAllSchedules = (scheduleId) => {
                             through: { attributes: ['status'] }
                         }
                     ],
-                    order: [['Sdate', 'DESC'], ['Stime', 'ASC']]
+                    order: [['Sdate', 'ASC'], ['Stime', 'ASC']] // Sắp xếp theo ngày trước, sau đó theo giờ
                 });
             } else if (scheduleId && scheduleId !== 'ALL') {
+                whereClause.id_schedule = scheduleId;
                 const schedule = await db.Schedule.findOne({
-                    where: { id_schedule: scheduleId },
+                    where: whereClause,
                     include: [
                         {
                             model: db.Route,
@@ -47,7 +133,7 @@ const getAllSchedules = (scheduleId) => {
                             include: [{
                                 model: db.User,
                                 as: 'user',
-                                attributes: ['name'] // Lấy name từ User
+                                attributes: ['name']
                             }]
                         },
                         {
@@ -66,7 +152,6 @@ const getAllSchedules = (scheduleId) => {
         }
     });
 };
-
 
 const createNewSchedule = async (data) => {
     return new Promise(async (resolve, reject) => {
@@ -353,10 +438,57 @@ const updateStudentPickupStatus = (scheduleId, studentId, status) => {
 //     }
 // }
 
+const autoUpdateScheduleStatus = async () => {
+    try {
+        const now = new Date();
+        const currentTime = now.toTimeString().split(' ')[0]; // HH:MM:SS
+        const currentDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        console.log(`🕒 Auto updating schedules for ${currentDate} ${currentTime}`);
+
+        // Lấy tất cả schedules của ngày hôm nay
+        const todaySchedules = await db.Schedule.findAll({
+            where: {
+                Sdate: currentDate,
+                status: ['Đã lên lịch', 'Vận hành'] // Chỉ update những schedule chưa hoàn thành
+            }
+        });
+
+        let updatedCount = 0;
+
+        for (const schedule of todaySchedules) {
+            const scheduleDateTime = new Date(`${schedule.Sdate}T${schedule.Stime}`);
+            const scheduleEndTime = new Date(scheduleDateTime.getTime() + (60 * 60 * 1000)); // +1 giờ
+
+            if (now >= scheduleDateTime && now < scheduleEndTime && schedule.status !== 'Vận hành') {
+                // Đến giờ làm - chuyển thành "Vận hành"
+                schedule.status = 'Vận hành';
+                await schedule.save();
+                updatedCount++;
+                console.log(`✅ Chuyển schedule ${schedule.id_schedule} sang Vận hành`);
+            } else if (now >= scheduleEndTime && schedule.status !== 'Hoàn thành') {
+                // Quá 1 giờ - chuyển thành "Hoàn thành"
+                schedule.status = 'Hoàn thành';
+                await schedule.save();
+                updatedCount++;
+                console.log(`✅ Chuyển schedule ${schedule.id_schedule} sang Hoàn thành`);
+            }
+        }
+
+        console.log(`📊 Đã cập nhật ${updatedCount} schedules`);
+        return updatedCount;
+
+    } catch (error) {
+        console.error('❌ Lỗi auto update schedule status:', error);
+        throw error;
+    }
+};
+
 module.exports = {
     createNewSchedule,
     getAllSchedules,
     deleteSchedule,
     updateSchedule,
-    updateStudentPickupStatus
+    updateStudentPickupStatus,
+    autoUpdateScheduleStatus
 }

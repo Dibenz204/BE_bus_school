@@ -1,7 +1,5 @@
 
-
 const userService = require('../services/userService.js')
-
 
 const handleLogin = async (req, res) => {
     try {
@@ -15,9 +13,9 @@ const handleLogin = async (req, res) => {
             });
         }
 
-        // Gọi service xử lý login
+        // ⭐ GỌI SERVICE XỬ LÝ LOGIN
         const result = await userService.handleLogin(email, password);
-        
+
         return res.status(200).json(result);
 
     } catch (e) {
