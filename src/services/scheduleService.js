@@ -366,34 +366,66 @@ const updateStudentPickupStatus = (scheduleId, studentId, status) => {
     });
 };
 
-// // Lấy schedules theo driver
-// const getSchedulesByDriver = (driverId) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const schedules = await db.Schedule.findAll({
-//                 where: { id_driver: driverId },
-//                 include: [
-//                     {
-//                         model: db.Route,
-//                         as: 'routes',
-//                         attributes: ['id_route', 'name_street']
-//                     },
-//                     {
-//                         model: db.Student,
-//                         as: 'students',
-//                         attributes: ['id_student', 'name', 'class', 'gender'],
-//                         through: { attributes: ['status'] }
-//                     }
-//                 ],
-//                 order: [['Sdate', 'DESC'], ['Stime', 'ASC']]
-//             });
+// Lấy schedules theo driver
+const getSchedulesByDriver = async (idDriver) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const now = new Date();
+            const currentDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            const currentTime = now.toTimeString().split(' ')[0]; // Format: HH:MM:SS
 
-//             resolve(schedules);
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// };
+            // Tìm schedule đang "Vận hành" và đúng thời gian
+            const schedules = await db.Schedule.findAll({
+                where: {
+                    id_driver: idDriver,
+                    status: 'Vận hành',
+                    Sdate: currentDate
+                },
+                include: [
+                    {
+                        model: db.Route,
+                        as: 'routes',
+                        attributes: ['id_route', 'name_street']
+                    }
+                ],
+                order: [['Stime', 'ASC']]
+            });
+
+            if (!schedules || schedules.length === 0) {
+                resolve({
+                    errCode: 1,
+                    message: 'Không có lịch vận hành nào trong ngày hôm nay',
+                    data: null
+                });
+                return;
+            }
+
+            // Tìm schedule phù hợp với thời gian hiện tại (trong khoảng 2 tiếng)
+            const activeSchedule = schedules.find(schedule => {
+                const scheduleTime = schedule.Stime;
+                const [sHour, sMinute] = scheduleTime.split(':').map(Number);
+                const [cHour, cMinute, cSecond] = currentTime.split(':').map(Number);
+
+                const scheduleMinutes = sHour * 60 + sMinute;
+                const currentMinutes = cHour * 60 + cMinute;
+
+                // Trong khoảng ±2 tiếng (120 phút)
+                const diff = Math.abs(scheduleMinutes - currentMinutes);
+                return diff <= 120;
+            });
+
+            resolve({
+                errCode: 0,
+                message: 'Lấy lịch thành công',
+                data: activeSchedule || schedules[0] // Nếu không tìm thấy, lấy schedule đầu tiên
+            });
+
+        } catch (e) {
+            console.error('❌ Lỗi getSchedulesByDriver:', e);
+            reject(e);
+        }
+    });
+};
 
 // // Lấy schedules theo route
 // const getSchedulesByRoute = (routeId) => {
@@ -490,5 +522,6 @@ module.exports = {
     deleteSchedule,
     updateSchedule,
     updateStudentPickupStatus,
-    autoUpdateScheduleStatus
+    autoUpdateScheduleStatus,
+    getSchedulesByDriver
 }

@@ -23,4 +23,7 @@ router.put('/update-student-status', scheduleController.updateStudentPickupStatu
 // Tự động cập nhật trạng thái schedule khi tới giờ (status: đã lên lịch, vận hành, hoàn thành)
 router.get('/auto-update-status', scheduleController.autoUpdateScheduleStatus);
 
+//Dùng để lấy schedule driver để render ra map
+router.get('/get-schedule-by-driver', scheduleController.getSchedulesByDriver);
+
 module.exports = router;

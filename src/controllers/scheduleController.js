@@ -270,6 +270,29 @@ const autoUpdateScheduleStatus = async (req, res) => {
     }
 };
 
+const getSchedulesByDriver = async (req, res) => {
+    try {
+        const idDriver = req.query.id_driver; // ⭐ Đổi từ params sang query
+
+        if (!idDriver) {
+            return res.status(400).json({
+                errCode: 1,
+                message: 'Thiếu id_driver'
+            });
+        }
+
+        const result = await scheduleService.getSchedulesByDriver(idDriver);
+        return res.status(200).json(result);
+
+    } catch (e) {
+        console.error('❌ Lỗi controller getSchedulesByDriver:', e);
+        return res.status(500).json({
+            errCode: -1,
+            message: 'Lỗi server'
+        });
+    }
+};
+
 module.exports = {
     getAllSchedules,
     createNewSchedule,
@@ -277,5 +300,6 @@ module.exports = {
     updateSchedule,
     getScheduleById,
     updateStudentPickupStatus,
-    autoUpdateScheduleStatus
+    autoUpdateScheduleStatus,
+    getSchedulesByDriver
 };
