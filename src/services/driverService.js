@@ -19,8 +19,8 @@ const createDriver = async (data) => {
             }
 
             await db.Driver.create({
-                toado_x: data.toado_x,
-                toado_y: data.toado_y,
+                toado_x: data.toado_x || 0,
+                toado_y: data.toado_y || 0,
                 id_user: data.id_user,
                 status: data.status || true
             })

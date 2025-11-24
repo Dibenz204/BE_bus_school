@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const scheduleController = require('../controllers/scheduleController');
 
-// Lấy tất cả schedules hoặc schedule theo query parameter
+// Lấy tất cả schedules với filter và sort
 router.get('/get-schedules', scheduleController.getAllSchedules);
+
+// // Lấy tất cả schedules hoặc schedule theo query parameter
+// router.get('/get-schedules', scheduleController.getAllSchedules);
 
 // Lấy schedule theo ID (query parameter)
 router.get('/get-schedule', scheduleController.getScheduleById);
@@ -25,5 +28,8 @@ router.get('/auto-update-status', scheduleController.autoUpdateScheduleStatus);
 
 //Dùng để lấy schedule driver để render ra map
 router.get('/get-schedule-by-driver', scheduleController.getSchedulesByDriver);
+
+// Lấy danh sách status cho filter (MỚI)
+router.get('/get-statuses', scheduleController.getScheduleStatuses);
 
 module.exports = router;

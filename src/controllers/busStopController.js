@@ -30,9 +30,32 @@ const getAllBusStops = async (req, res) => {
     }
 };
 
+// const deleteBusStop = async (req, res) => {
+//     try {
+//         const message = await busStopService.deleteBusStop(req.params.id);
+//         return res.status(200).json(message);
+//     } catch (e) {
+//         console.error("❌ Lỗi khi xóa trạm:", e);
+//         return res.status(500).json({
+//             errCode: 1,
+//             message: "Lỗi hệ thống khi xóa trạm"
+//         });
+//     }
+// };
+
 const deleteBusStop = async (req, res) => {
     try {
-        const message = await busStopService.deleteBusStop(req.params.id);
+        const { id } = req.query;  // SỬA: req.query thay vì req.params
+        console.log("🔍 DEBUG - Delete bus stop called with id:", id);
+
+        if (!id) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Thiếu ID trạm"
+            });
+        }
+
+        const message = await busStopService.deleteBusStop(id);
         return res.status(200).json(message);
     } catch (e) {
         console.error("❌ Lỗi khi xóa trạm:", e);
