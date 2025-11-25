@@ -192,10 +192,47 @@ const updateStudent = (data) => {
     });
 };
 
+const getStudentsByParent = (parentId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!parentId) {
+                resolve({
+                    errCode: 1,
+                    message: "Thiếu id phụ huynh!"
+                });
+                return;
+            }
+
+            const students = await db.Student.findAll({
+                where: { id_user: parentId },
+                include: [
+                    {
+                        model: db.busStop,
+                        as: 'busstop',
+                        attributes: ['id_busstop', 'name_station']
+                    }
+                ],
+                raw: false,
+                nest: true
+            });
+
+            resolve({
+                errCode: 0,
+                message: "Lấy danh sách học sinh thành công",
+                students: students
+            });
+
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 module.exports = {
     getAllStudent,
     createNewStudent,
     deleteStudent,
     getStudentInfoById,
-    updateStudent
+    updateStudent,
+    getStudentsByParent
 };

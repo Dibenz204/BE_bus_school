@@ -107,10 +107,29 @@ const handleUpdateStudent = async (req, res) => {
     }
 };
 
+const handleGetStudentsByParent = async (req, res) => {
+    try {
+        const parentId = req.query.id_user;
+
+        const result = await studentService.getStudentsByParent(parentId);
+
+        return res.status(200).json(result);
+
+    } catch (error) {
+        console.error("Lỗi khi lấy học sinh theo phụ huynh:", error);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi hệ thống khi lấy học sinh"
+        });
+    }
+};
+
+
 module.exports = {
     handleGetAllStudent,
     postCreateNewStudent,
     handleDeleteStudent,
     handleGetStudentById,
-    handleUpdateStudent
+    handleUpdateStudent,
+    handleGetStudentsByParent
 };

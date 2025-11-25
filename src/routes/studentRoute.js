@@ -18,4 +18,7 @@ router.delete('/delete-student', studentController.handleDeleteStudent);
 // Cập nhật student
 router.put("/update-student", studentController.handleUpdateStudent);
 
+// Lấy học sinh theo phụ huynh
+router.get('/get-by-parent', studentController.handleGetStudentsByParent);
+
 module.exports = router;
