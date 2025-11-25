@@ -7,12 +7,17 @@ module.exports = (sequelize, DataTypes) => {
             User.hasMany(models.Student, {
                 foreignKey: 'id_user',
                 as: 'students'
-            })
+            });
 
             User.hasMany(models.Driver, {
                 foreignKey: 'id_user',
                 as: 'drivers'
-            })
+            });
+
+            User.hasMany(models.Notification, {
+                foreignKey: 'id_user',
+                as: 'notifications'
+            });
         }
     }
 

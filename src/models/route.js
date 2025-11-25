@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'Route',
         tableName: 'route',
-        timestamps: false
+        timestamps: true
     });
 
     Route.beforeCreate(async (route, options) => {

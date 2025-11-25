@@ -61,7 +61,7 @@ module.exports = {
             }
 
         });
-        await queryInterface.addIndex('student', ['mssv']);
+        // await queryInterface.addIndex('student', ['mssv']);
     },
 
 

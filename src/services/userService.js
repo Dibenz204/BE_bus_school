@@ -80,34 +80,98 @@ const userByRole = async (inputRole) => {
 }
 
 
+// const createNewUser = async (data) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             await db.User.create({
+//                 // id_user: data.id_user,
+//                 name: data.name,
+//                 email: data.email,
+//                 phone: data.phone,
+//                 birthday: data.birthday,
+//                 gender: data.gender,
+//                 address: data.address,
+//                 // password: data.password,
+//                 role: data.role
+//             });
+
+//             resolve({
+//                 errCode: 0,
+//                 message: 'Tạo người dùng thành công!'
+//             })
+
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
 const createNewUser = async (data) => {
     return new Promise(async (resolve, reject) => {
+        const transaction = await db.sequelize.transaction();
         try {
-            await db.User.create({
-                // id_user: data.id_user,
+            // Tạo user mới
+            const newUser = await db.User.create({
                 name: data.name,
                 email: data.email,
                 phone: data.phone,
                 birthday: data.birthday,
                 gender: data.gender,
                 address: data.address,
-                // password: data.password,
                 role: data.role
-            });
+            }, { transaction });
+
+            // Nếu role là "Tài xế", tự động tạo bản ghi trong bảng Driver
+            if (data.role === "Tài xế") {
+                await db.Driver.create({
+                    toado_x: 0, // Tọa độ mặc định
+                    toado_y: 0, // Tọa độ mặc định
+                    id_user: newUser.id_user, // Lấy id_user vừa tạo
+                    status: true // Trạng thái mặc định là hoạt động
+                }, { transaction });
+            }
+
+            await transaction.commit();
 
             resolve({
                 errCode: 0,
-                message: 'Tạo người dùng thành công!'
-            })
+                message: 'Tạo người dùng thành công!' + (data.role === "Tài xế" ? ' Và đã tạo tài khoản tài xế.' : '')
+            });
 
         } catch (e) {
+            await transaction.rollback();
             reject(e);
         }
     });
 };
 
+// const deleteUser = (userId) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             const user = await db.User.findOne({
+//                 where: { id_user: userId },
+//                 raw: false,
+//             });
+
+//             if (!user) {
+//                 resolve({
+//                     errCode: 1,
+//                     message: 'Không tìm thấy người dùng!',
+//                 });
+//             } else {
+//                 await user.destroy();
+//                 resolve({
+//                     errCode: 0,
+//                     message: 'Xóa người dùng thành công!',
+//                 });
+//             }
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
 const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
+        const transaction = await db.sequelize.transaction();
         try {
             const user = await db.User.findOne({
                 where: { id_user: userId },
@@ -115,18 +179,32 @@ const deleteUser = (userId) => {
             });
 
             if (!user) {
+                await transaction.rollback();
                 resolve({
                     errCode: 1,
                     message: 'Không tìm thấy người dùng!',
                 });
             } else {
-                await user.destroy();
+                // Nếu user là tài xế, xóa bản ghi trong bảng Driver trước
+                if (user.role === "Tài xế") {
+                    await db.Driver.destroy({
+                        where: { id_user: userId },
+                        transaction
+                    });
+                }
+
+                // Sau đó xóa user
+                await user.destroy({ transaction });
+
+                await transaction.commit();
+
                 resolve({
                     errCode: 0,
-                    message: 'Xóa người dùng thành công!',
+                    message: 'Xóa người dùng thành công!' + (user.role === "Tài xế" ? ' Và đã xóa thông tin tài xế.' : ''),
                 });
             }
         } catch (e) {
+            await transaction.rollback();
             reject(e);
         }
     });

@@ -4,10 +4,6 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Schedule extends Model {
         static associate(models) {
-            // Schedule.belongsTo(models.Bus, {
-            //     foreignKey: 'id_bus',
-            //     as: 'bus'
-            // });
             Schedule.belongsTo(models.Route, {
                 foreignKey: 'id_route',
                 as: 'routes'
@@ -23,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_schedule',
                 otherKey: 'id_student',
                 as: 'students'
+            });
+
+            Schedule.hasMany(models.Notification, {
+                foreignKey: 'id_schedule',
+                as: 'notifications'
             });
         }
     }

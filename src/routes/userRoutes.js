@@ -28,6 +28,6 @@ router.post('/change-password-with-old', userController.handleChangePasswordWith
 // Route xác thực mật khẩu cũ (không đổi mật khẩu)
 router.post('/verify-old-password', userController.handleVerifyOldPassword);
 
-router.get('/get-user-by-phone', userController.getUserByPhone);
+router.get('/user-by-phone', userController.getUserByPhone);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -6,6 +7,7 @@ module.exports = {
             id_route: {
                 type: Sequelize.STRING(10),
                 allowNull: false,
+                primaryKey: true,  // ✅ Thêm primaryKey ngay đây
                 references: {
                     model: 'route',
                     key: 'id_route'
@@ -16,8 +18,9 @@ module.exports = {
             id_busstop: {
                 type: Sequelize.STRING(10),
                 allowNull: false,
+                primaryKey: true,  // ✅ Thêm primaryKey ngay đây
                 references: {
-                    model: 'busStop',
+                    model: 'busstop',
                     key: 'id_busstop'
                 },
                 onUpdate: 'CASCADE',
@@ -29,14 +32,7 @@ module.exports = {
             }
         });
 
-        // Khóa chính kép
-        await queryInterface.addConstraint('route_busstop', {
-            fields: ['id_route', 'id_busstop'],
-            type: 'primary key',
-            name: 'pk_route_busstop'
-        });
-
-        // Optional: Đảm bảo thứ tự không trùng trong cùng tuyến
+        // ✅ Unique constraint cho (id_route + stt_busstop)
         await queryInterface.addConstraint('route_busstop', {
             fields: ['id_route', 'stt_busstop'],
             type: 'unique',
@@ -48,8 +44,6 @@ module.exports = {
         await queryInterface.dropTable('route_busstop');
     }
 };
-
-
 
 // 'use strict';
 // /** @type {import('sequelize-cli').Migration} */
@@ -70,7 +64,7 @@ module.exports = {
 //                 type: Sequelize.STRING(10),
 //                 allowNull: false,
 //                 references: {
-//                     model: 'busStop',
+//                     model: 'busstop',
 //                     key: 'id_busstop'
 //                 },
 //                 onUpdate: 'CASCADE',
@@ -82,11 +76,18 @@ module.exports = {
 //             }
 //         });
 
-//         // Nếu muốn tránh trùng (1 route có cùng trạm 2 lần)
+//         // Khóa chính kép
 //         await queryInterface.addConstraint('route_busstop', {
 //             fields: ['id_route', 'id_busstop'],
 //             type: 'primary key',
 //             name: 'pk_route_busstop'
+//         });
+
+//         // Optional: Đảm bảo thứ tự không trùng trong cùng tuyến
+//         await queryInterface.addConstraint('route_busstop', {
+//             fields: ['id_route', 'stt_busstop'],
+//             type: 'unique',
+//             name: 'uq_route_stt'
 //         });
 //     },
 

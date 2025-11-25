@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_driver',
                 as: 'buses'
             });
+
+            Driver.hasMany(models.Notification, {
+                foreignKey: 'id_driver',
+                as: 'notifications'
+            });
         }
     }
 
