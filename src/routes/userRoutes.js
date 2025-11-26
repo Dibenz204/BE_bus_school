@@ -30,4 +30,7 @@ router.post('/verify-old-password', userController.handleVerifyOldPassword);
 
 router.get('/user-by-phone', userController.getUserByPhone);
 
+// Thêm vào userRoutes.js
+router.get('/get-driver-locations-for-parent', userController.getDriverLocationsForParent);
+
 module.exports = router;

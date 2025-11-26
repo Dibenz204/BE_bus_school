@@ -157,6 +157,30 @@ const handleUpdateUser = async (req, res) => {
     }
 };
 
+// Thêm vào userController.js
+const getDriverLocationsForParent = async (req, res) => {
+    try {
+        const { id_parent } = req.query;
+
+        if (!id_parent) {
+            return res.status(400).json({
+                errCode: 1,
+                message: "Thiếu id phụ huynh!"
+            });
+        }
+
+        const result = await userService.getActiveDriverLocationsForParent(id_parent);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("❌ Lỗi controller getDriverLocationsForParent:", error);
+        return res.status(500).json({
+            errCode: 1,
+            message: "Lỗi server: " + error.message
+        });
+    }
+};
+
 const handleSendOTP = async (req, res) => {
     try {
         const { email } = req.body;
@@ -308,6 +332,7 @@ module.exports = {
     postCreateNewUser,
     handleDeleteUser,
     handleUpdateUser,
+    getDriverLocationsForParent,
     getUserByPhone,
     handleSendOTP,
     handleVerifyOTP,

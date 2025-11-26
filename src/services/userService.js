@@ -105,6 +105,8 @@ const userByRole = async (inputRole) => {
 //         }
 //     });
 // };
+
+
 const createNewUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         const transaction = await db.sequelize.transaction();
@@ -144,31 +146,7 @@ const createNewUser = async (data) => {
     });
 };
 
-// const deleteUser = (userId) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const user = await db.User.findOne({
-//                 where: { id_user: userId },
-//                 raw: false,
-//             });
 
-//             if (!user) {
-//                 resolve({
-//                     errCode: 1,
-//                     message: 'Không tìm thấy người dùng!',
-//                 });
-//             } else {
-//                 await user.destroy();
-//                 resolve({
-//                     errCode: 0,
-//                     message: 'Xóa người dùng thành công!',
-//                 });
-//             }
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// };
 const deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         const transaction = await db.sequelize.transaction();
@@ -393,6 +371,101 @@ const handleLogin = async (email, password) => {
         } catch (e) {
             console.error("❌ Lỗi trong handleLogin:", e);
             reject(e);
+        }
+    });
+};
+
+// Thêm vào userService.js
+const getActiveDriverLocationsForParent = async (id_parent) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id_parent) {
+                resolve({
+                    errCode: 1,
+                    message: "Thiếu id phụ huynh!"
+                });
+                return;
+            }
+
+            // Bước 1: Lấy tất cả học sinh của phụ huynh này
+            const students = await db.Student.findAll({
+                where: { id_user: id_parent },
+                attributes: ['id_student'],
+                raw: true
+            });
+
+            if (!students || students.length === 0) {
+                resolve({
+                    errCode: 0,
+                    message: "Không có học sinh nào",
+                    data: []
+                });
+                return;
+            }
+
+            const studentIds = students.map(s => s.id_student);
+
+            // Bước 2: Tìm các schedule đang "Vận hành" có học sinh này với status "Có mặt"
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            const activeSchedules = await db.Schedule.findAll({
+                where: {
+                    status: 'Vận hành',
+                    Sdate: currentDate
+                },
+                include: [
+                    {
+                        model: db.Driver,
+                        as: 'driver',
+                        attributes: ['id_driver', 'toado_x', 'toado_y'],
+                        include: [{
+                            model: db.User,
+                            as: 'user',
+                            attributes: ['name']
+                        }]
+                    },
+                    {
+                        model: db.Student,
+                        as: 'students',
+                        attributes: ['id_student'],
+                        through: {
+                            where: {
+                                status: 'Có mặt',
+                                id_student: studentIds
+                            },
+                            attributes: []
+                        }
+                    }
+                ],
+                raw: false,
+                nest: true
+            });
+
+            // Bước 3: Lọc và format dữ liệu
+            const driverLocations = activeSchedules
+                .filter(schedule => schedule.students && schedule.students.length > 0)
+                .map(schedule => ({
+                    id_driver: schedule.driver.id_driver,
+                    driver_name: schedule.driver.user.name,
+                    toado_x: schedule.driver.toado_x,
+                    toado_y: schedule.driver.toado_y,
+                    id_schedule: schedule.id_schedule,
+                    schedule_time: schedule.Stime,
+                    students: schedule.students.map(student => ({
+                        id_student: student.id_student
+                    })),
+                    last_updated: schedule.driver.updatedAt
+                }));
+
+            resolve({
+                errCode: 0,
+                message: "Lấy vị trí tài xế thành công",
+                data: driverLocations
+            });
+
+        } catch (error) {
+            console.error("❌ Lỗi trong getActiveDriverLocationsForParent:", error);
+            reject(error);
         }
     });
 };
@@ -703,10 +776,8 @@ const verifyOldPasswordOnly = async (email, oldPassword) => {
     });
 };
 
-// module.exports = { getAllUser, userCountByRole, userByRole, createNewUser, deleteUser, getUserInfoById, updateUser, handleLogin };
-
 module.exports = {
-    getAllUser, userCountByRole, userByRole,
+    getAllUser, userCountByRole, userByRole, getActiveDriverLocationsForParent,
     createNewUser, deleteUser, getUserInfoById, updateUser, getUserByPhone,
     handleLogin, sendPasswordResetOTP, verifyOTP, changePassword,
     resetPassword, changePasswordWithOldPassword, verifyOldPasswordOnly
