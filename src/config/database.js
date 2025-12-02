@@ -2,7 +2,7 @@
 // require('dotenv').config()
 
 
-//ĐÂY LÀ CONNECT DATABASE THEO CÁCH CŨ (COMMONJS)
+// ĐÂY LÀ CONNECT DATABASE THEO CÁCH CŨ (COMMONJS)
 // import mysql from 'mysql2'
 // import dotenv from 'dotenv';
 // dotenv.config();

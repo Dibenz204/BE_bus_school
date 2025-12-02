@@ -18,6 +18,8 @@ const dashBoardRoute = require('./routes/dashboardRoute.js');
 const studentRoute = require('./routes/studentRoute.js');
 const busRoute = require('./routes/busRoute.js');
 const notificationRoute = require('./routes/notificationRoute.js');
+const evaluateRoute = require('./routes/evaluateRoute.js');
+const requestRoute = require('./routes/requestRoute.js');
 
 const { initSocketServer } = require('./socketServer');
 
@@ -91,6 +93,8 @@ app.use('/api/dashboard', dashBoardRoute);
 app.use('/api/student', studentRoute);
 app.use('/api/bus', busRoute);
 app.use('/api/notification', notificationRoute);
+app.use('/api/evaluate', evaluateRoute);
+app.use('/api/request', requestRoute);
 app.use('/', webRoutes); //Cấu hình route, '' nghĩa là ko có tiền tố gì cả, nếu muốn có tiền tố thì thay '' thành '/api' chẳng hạn
 //Ví dụ: nếu để app.use('/hehe', webRoutes); thì khi chạy, nó sẽ là localhost:5000/hehe/........ rồi mới tới các đường dẫn khác phía sau
 //-----------------------------------------------------------------------------

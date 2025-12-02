@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_schedule',
                 as: 'notifications'
             });
+
+            Schedule.hasMany(models.Evaluate, {
+                foreignKey: 'id_schedule',
+                as: 'evaluates'
+            });
         }
     }
 

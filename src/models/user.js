@@ -18,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'id_user',
                 as: 'notifications'
             });
+
+            User.hasMany(models.Evaluate, {
+                foreignKey: 'id_user',
+                as: 'evaluates'
+            });
+
+            User.hasMany(models.Request, {
+                foreignKey: 'id_user',
+                as: 'requests'
+            });
         }
     }
 

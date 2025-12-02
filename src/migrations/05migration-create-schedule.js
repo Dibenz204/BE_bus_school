@@ -5,6 +5,7 @@ module.exports = {
         await queryInterface.createTable('schedule', {
             id_schedule: {
                 type: Sequelize.STRING(10),
+                allowNull: false,
                 primaryKey: true
             },
             // id_bus: {
@@ -48,6 +49,16 @@ module.exports = {
             status: {
                 type: Sequelize.ENUM('Đã lên lịch', 'Vận hành', 'Hoàn thành', 'Hủy bỏ'),
                 defaultValue: 'Đã lên lịch'
+            },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             }
         });
     },
