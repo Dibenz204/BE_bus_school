@@ -11,7 +11,7 @@ module.exports = {
 
             id_schedule: {
                 type: Sequelize.STRING(10),
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: 'schedule',
                     key: 'id_schedule'
@@ -22,7 +22,7 @@ module.exports = {
 
             id_busstop: {
                 type: Sequelize.STRING(10),
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: 'busstop',
                     key: 'id_busstop'
@@ -33,7 +33,7 @@ module.exports = {
 
             id_driver: {
                 type: Sequelize.STRING(10),
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: 'driver',
                     key: 'id_driver'
@@ -45,7 +45,6 @@ module.exports = {
             id_user: {
                 type: Sequelize.STRING(10),
                 allowNull: true,
-                comment: 'NULL = gửi cho tất cả phụ huynh liên quan',
                 references: {
                     model: 'user',
                     key: 'id_user'
@@ -66,9 +65,9 @@ module.exports = {
             },
 
             notification_type: {
-                type: Sequelize.ENUM('bus_approaching', 'bus_arrived', 'bus_departed', 'schedule_update'),
+                type: Sequelize.ENUM('Trạm', 'Lịch trình', 'Sự cố', 'Khác'),
                 allowNull: false,
-                defaultValue: 'bus_approaching'
+                defaultValue: 'Lịch trình'
             },
 
             createdAt: {

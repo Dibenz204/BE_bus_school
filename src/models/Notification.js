@@ -35,20 +35,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         id_schedule: {
             type: DataTypes.STRING(10),
-            allowNull: false
+            allowNull: true
         },
         id_busstop: {
             type: DataTypes.STRING(10),
-            allowNull: false
+            allowNull: true
         },
         id_driver: {
             type: DataTypes.STRING(10),
-            allowNull: false
+            allowNull: true
         },
         id_user: {
             type: DataTypes.STRING(10),
-            allowNull: true, // NULL = gửi cho tất cả phụ huynh liên quan
-            comment: 'User cụ thể nhận thông báo (nếu null = gửi cho all parents liên quan)'
+            allowNull: true,
         },
         message: {
             type: DataTypes.TEXT,
@@ -59,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'parent'
         },
         notification_type: {
-            type: DataTypes.ENUM('bus_approaching', 'bus_arrived', 'bus_departed', 'schedule_update'),
+            type: DataTypes.ENUM('Trạm', 'Lịch trình', 'Sự cố', 'Khác'),
             defaultValue: 'bus_approaching'
         }
     }, {
