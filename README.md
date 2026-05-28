@@ -23,7 +23,7 @@ A backend system serving **3 user roles** (Admin, Parent, Driver) with real-time
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -36,20 +36,29 @@ A backend system serving **3 user roles** (Admin, Parent, Driver) with real-time
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 BE_bus_school/
 ├── src/
-│   ├── config/          # DB config, env setup
-│   ├── controllers/     # Route, stop, attendance, driver controllers
-│   ├── migrations/      # Auth, role-check middleware
-│   ├── models/          # Sequelize models
+│   ├── config/          # DB config, environment setup
+│   ├── controllers/     # Request handlers for each module
+│   ├── migrations/      # Sequelize migration files
+│   ├── models/          # Sequelize model definitions
 │   ├── routes/          # API route definitions
-│   └── socket/          # Socket.IO event handlers
+│   ├── seeders/         # Database seed data
+│   ├── services/        # Business logic layer
+│   ├── utils/           # Helper functions
+│   └── views/           # [server-side views nếu có]
+├── .babelrc             # Babel config (ES module support)
 ├── .env.example
+├── .sequelizerc         # Sequelize CLI config
+├── cronJob.js           
+├── server.js            # App entry point
+├── socketNotifier.js    # Socket.IO notification handlers
+├── socketServer.js      # Socket.IO server setup
 ├── package.json
-└── server.js
+└── .gitignore
 ```
 
 ## Getting Started
