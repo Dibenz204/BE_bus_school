@@ -6,9 +6,16 @@
 
 ## Overview
 
-A backend system serving **3 user roles** (Admin, Parent, Driver) with real-time GPS tracking, student attendance management, and route/bus stop operations.
+A responsive web application serving **3 user roles** — Admin, Parent, and Driver — with real-time bus tracking via interactive map, student attendance visibility, and route/bus stop management.
 
-**Live Demo:** (Hiện tại chưa hoạt động, do phần deploy database bằng railway đã hết hiệu lực) 
+**Live Demo:** https://bus-smart-school.vercel.app/
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | abc@gmail.com | 123456 |
+| Driver | xeom@gmail.com | 123456 |
+| Parent | lala@gmail.com | 123456 |
+
 **Frontend Repo:** [https://github.com/Dibenz204/FE_Bus_School](https://github.com/Dibenz204/FE_Bus_School)
 
 ---
